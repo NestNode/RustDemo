@@ -1,4 +1,4 @@
-name: Build Release Binaries
+name: Native Multi-Platform Build
 
 on:
   push:
@@ -16,47 +16,84 @@ jobs:
     strategy:
       matrix:
         include:
-          # x86_64 目标
+          # Linux 平台
           - os: ubuntu-22.04
-            target: x86_64-unknown-linux-musl  # 静态链接 Linux
+            target: x86_64-unknown-linux-gnu       # 原生 x86_64
+            toolchain: []
+          # - os: ubuntu-22.04
+          #   target: x86_64-unknown-linux-musl      # 静态链接
+          #   toolchain: "musl-tools"
+          # - os: ubuntu-22.04
+          #   target: aarch64-unknown-linux-gnu      # 交叉编译 ARM64
+          #   toolchain: "gcc-aarch64-linux-gnu"
+          # Windows 平台
           - os: windows-latest
-            target: x86_64-pc-windows-msvc      # Windows
+            target: x86_64-pc-windows-msvc         # 原生 x64
+            toolchain: []
+          # - os: windows-latest
+          #   target: aarch64-pc-windows-msvc        # ARM64 (需要交叉编译)
+          #   toolchain: "clang"
+          # macOS 平台
           - os: macos-latest
-            target: x86_64-apple-darwin         # macOS
-          # ARM 目标（可选）
-          - os: ubuntu-22.04
-            target: aarch64-unknown-linux-musl  # ARM Linux
+            target: x86_64-apple-darwin            # Intel 兼容模式
+            toolchain: []
           - os: macos-latest
-            target: aarch64-apple-darwin        # ARM macOS
+            target: aarch64-apple-darwin           # 原生 Apple Silicon
+            toolchain: []
 
     steps:
-      - name: 01. Checkout code
+      - name: 01. code checkout
         uses: actions/checkout@v4
 
-      - name: 02. Install Rust
+      # 安装平台专用工具链
+      - name: 02. Install Toolchain
+        if: matrix.toolchain != ''
+        run: |
+          case "${{ runner.os }}" in
+            Linux)
+              sudo apt-get update
+              sudo apt-get install -y ${{ matrix.toolchain }}
+              ;;
+            Windows)
+              choco install ${{ matrix.toolchain }}  # 示例：通过 Chocolatey 安装
+              ;;
+          esac
+
+      # 配置 Rust 环境
+      - name: 02. Setup Rust
         uses: dtolnay/rust-toolchain@stable
         with:
           targets: ${{ matrix.target }}
-          profile: minimal
+          components: rust-std
 
+      # 解决 macOS 常见问题
+      - name: Fix macOS SDK (Apple Silicon)
+        if: matrix.os == 'macos-latest' && matrix.target == 'aarch64-apple-darwin'
+        run: |
+          sudo xcode-select -s /Applications/Xcode_14.2.app/Contents/Developer
+          sudo xcodebuild -license accept
+
+      # 执行编译
       - name: 04. Build Release
         run: cargo build --release --target ${{ matrix.target }}
 
+      # 智能处理产物名称
       - name: Package Artifacts
         run: |
-          mkdir -p release
-          cp target/${{ matrix.target }}/release/${APP_NAME}* release/
-          # Windows 可执行文件后缀处理
-          if [[ "${{ matrix.target }}" == *"windows"* ]]; then
-            mv release/${APP_NAME}.exe release/${APP_NAME}-${{ matrix.target }}.exe
-          else
-            mv release/${APP_NAME} release/${APP_NAME}-${{ matrix.target }}
-          fi
-        env:
-          APP_NAME: your_app_name  # 替换为你的应用名称
+          BIN_NAME=your_app
+          OUTPUT_DIR=release
 
-      - name: Upload Artifacts
-        uses: actions/upload-artifact@v4
+          mkdir -p $OUTPUT_DIR
+          case "${{ matrix.target }}" in
+            *windows*)
+              cp target/${{ matrix.target }}/release/$BIN_NAME.exe $OUTPUT_DIR/${BIN_NAME}-${{ matrix.target }}.exe
+              ;;
+            *)
+              cp target/${{ matrix.target }}/release/$BIN_NAME $OUTPUT_DIR/${BIN_NAME}-${{ matrix.target }}
+              ;;
+          esac
+
+      - uses: actions/upload-artifact@v4
         with:
-          name: binaries
+          name: binaries-${{ matrix.os }}-${{ matrix.target }}
           path: release/
