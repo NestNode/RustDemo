@@ -76,7 +76,9 @@ jobs:
 
       # 执行编译
       - name: 04. Build Release
-        run: cargo build --release --target ${{ matrix.target }}
+        run: |
+          cargo build --release --target ${{ matrix.target }}
+          ls
 
       # 智能处理产物名称
       # - name: Package Artifacts
@@ -97,4 +99,4 @@ jobs:
       - uses: actions/upload-artifact@v4
         with:
           name: binaries-${{ matrix.os }}-${{ matrix.target }}
-          path: release/
+          path: target/
