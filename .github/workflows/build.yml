@@ -35,7 +35,7 @@ jobs:
             toolchain: []
           - os: windows-latest
             target: aarch64-pc-windows-msvc        # ARM64 (交叉编译)
-            toolchain: "clang"
+            toolchain: []                          # "clang"
           # macOS 平台
           - os: macos-latest
             target: x86_64-apple-darwin            # Intel 兼容模式
@@ -47,6 +47,25 @@ jobs:
     steps:
       - name: 01. code checkout
         uses: actions/checkout@v4
+
+      # 交叉编译工具修复
+      - name: 02. Install Cross-compiler Toolchain
+        if: matrix.os == 'ubuntu-22.04'
+        run: |
+          # 按需安装 musl 工具链
+          if [[ "${{ matrix.target }}" == *"musl"* ]]; then
+            echo "安装 musl 工具链..."
+            sudo apt-get update
+            sudo apt-get install -y musl-tools
+            rustup target add x86_64-unknown-linux-musl
+          fi
+          # 按需安装 ARM64 交叉编译工具链
+          if [[ "${{ matrix.target }}" == *"aarch64"* ]]; then
+            echo "安装 ARM64 交叉编译工具链..."
+            sudo apt-get update
+            sudo apt-get install -y gcc-aarch64-linux-gnu
+            rustup target add aarch64-unknown-linux-gnu
+          fi
 
       # 安装平台专用工具链 (github有些系统会内置rust，而且这东西安装很慢，如果有内置那就不装)
       # - name: 02. Install Toolchain
