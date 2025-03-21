@@ -23,19 +23,19 @@ jobs:
           - os: ubuntu-22.04
             target: x86_64-unknown-linux-gnu       # 原生 x86_64
             toolchain: []
-          # - os: ubuntu-22.04
-          #   target: x86_64-unknown-linux-musl      # 静态链接
-          #   toolchain: "musl-tools"
-          # - os: ubuntu-22.04
-          #   target: aarch64-unknown-linux-gnu      # 交叉编译 ARM64
-          #   toolchain: "gcc-aarch64-linux-gnu"
+          - os: ubuntu-22.04
+            target: x86_64-unknown-linux-musl      # 静态链接
+            toolchain: "musl-tools"
+          - os: ubuntu-22.04
+            target: aarch64-unknown-linux-gnu      # ARM64 (交叉编译)
+            toolchain: "gcc-aarch64-linux-gnu"
           # Windows 平台
           - os: windows-latest
             target: x86_64-pc-windows-msvc         # 原生 x64
             toolchain: []
-          # - os: windows-latest
-          #   target: aarch64-pc-windows-msvc        # ARM64 (需要交叉编译)
-          #   toolchain: "clang"
+          - os: windows-latest
+            target: aarch64-pc-windows-msvc        # ARM64 (交叉编译)
+            toolchain: "clang"
           # macOS 平台
           - os: macos-latest
             target: x86_64-apple-darwin            # Intel 兼容模式
@@ -84,6 +84,7 @@ jobs:
 
       # 智能处理产物名称，只保留可执行文件
       - name: Package Artifacts
+        shell: bash
         run: |
           BIN_NAME=rust-http-demo # [!code] 这里要写入你toml里写的app名
           OUTPUT_DIR=release      # [!code]
