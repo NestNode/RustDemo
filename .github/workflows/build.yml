@@ -1,3 +1,5 @@
+# 根据情况修改 branches name、BIN_NAME (toml对应的应用名)
+
 name: Native Multi-Platform Build
 
 on:
@@ -80,23 +82,23 @@ jobs:
           cargo build --release --target ${{ matrix.target }}
           ls
 
-      # 智能处理产物名称
-      # - name: Package Artifacts
-      #   run: |
-      #     BIN_NAME=your_app
-      #     OUTPUT_DIR=release
-      # 
-      #     mkdir -p $OUTPUT_DIR
-      #     case "${{ matrix.target }}" in
-      #       *windows*)
-      #         cp target/${{ matrix.target }}/release/$BIN_NAME.exe $OUTPUT_DIR/${BIN_NAME}-${{ matrix.target }}.exe
-      #         ;;
-      #       *)
-      #         cp target/${{ matrix.target }}/release/$BIN_NAME $OUTPUT_DIR/${BIN_NAME}-${{ matrix.target }}
-      #         ;;
-      #     esac
+      # 智能处理产物名称，只保留可执行文件
+      - name: Package Artifacts
+        run: |
+          BIN_NAME=rust-http-demo # [!code] 这里要写入你toml里写的app名
+          OUTPUT_DIR=release      # [!code]
+      
+          mkdir -p $OUTPUT_DIR
+          case "${{ matrix.target }}" in
+            *windows*)
+              cp target/${{ matrix.target }}/release/$BIN_NAME.exe $OUTPUT_DIR/${BIN_NAME}-${{ matrix.target }}.exe
+              ;;
+            *)
+              cp target/${{ matrix.target }}/release/$BIN_NAME $OUTPUT_DIR/${BIN_NAME}-${{ matrix.target }}
+              ;;
+          esac
 
       - uses: actions/upload-artifact@v4
         with:
           name: binaries-${{ matrix.os }}-${{ matrix.target }}
-          path: target/
+          path: relase/
