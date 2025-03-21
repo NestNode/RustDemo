@@ -79,20 +79,20 @@ jobs:
         run: cargo build --release --target ${{ matrix.target }}
 
       # 智能处理产物名称
-      - name: Package Artifacts
-        run: |
-          BIN_NAME=your_app
-          OUTPUT_DIR=release
-
-          mkdir -p $OUTPUT_DIR
-          case "${{ matrix.target }}" in
-            *windows*)
-              cp target/${{ matrix.target }}/release/$BIN_NAME.exe $OUTPUT_DIR/${BIN_NAME}-${{ matrix.target }}.exe
-              ;;
-            *)
-              cp target/${{ matrix.target }}/release/$BIN_NAME $OUTPUT_DIR/${BIN_NAME}-${{ matrix.target }}
-              ;;
-          esac
+      # - name: Package Artifacts
+      #   run: |
+      #     BIN_NAME=your_app
+      #     OUTPUT_DIR=release
+      # 
+      #     mkdir -p $OUTPUT_DIR
+      #     case "${{ matrix.target }}" in
+      #       *windows*)
+      #         cp target/${{ matrix.target }}/release/$BIN_NAME.exe $OUTPUT_DIR/${BIN_NAME}-${{ matrix.target }}.exe
+      #         ;;
+      #       *)
+      #         cp target/${{ matrix.target }}/release/$BIN_NAME $OUTPUT_DIR/${BIN_NAME}-${{ matrix.target }}
+      #         ;;
+      #     esac
 
       - uses: actions/upload-artifact@v4
         with:
