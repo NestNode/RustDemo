@@ -45,19 +45,19 @@ jobs:
       - name: 01. code checkout
         uses: actions/checkout@v4
 
-      # 安装平台专用工具链
-      - name: 02. Install Toolchain
-        if: matrix.toolchain != ''
-        run: |
-          case "${{ runner.os }}" in
-            Linux)
-              sudo apt-get update
-              sudo apt-get install -y ${{ matrix.toolchain }}
-              ;;
-            Windows)
-              choco install ${{ matrix.toolchain }}  # 示例：通过 Chocolatey 安装
-              ;;
-          esac
+      # 安装平台专用工具链 (github有些系统会内置rust，而且这东西安装很慢，如果有内置那就不装)
+      # - name: 02. Install Toolchain
+      #   if: matrix.toolchain != ''
+      #   run: |
+      #     case "${{ runner.os }}" in
+      #       Linux)
+      #         sudo apt-get update
+      #         sudo apt-get install -y ${{ matrix.toolchain }}
+      #         ;;
+      #       Windows)
+      #         choco install ${{ matrix.toolchain }}  # 示例：通过 Chocolatey 安装
+      #         ;;
+      #     esac
 
       # 配置 Rust 环境
       - name: 02. Setup Rust
