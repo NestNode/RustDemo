@@ -14,6 +14,7 @@ jobs:
   build:
     runs-on: ${{ matrix.os }}
     strategy:
+      fail-fast: false # 一个失败不影响其他的矩阵运行
       matrix:
         include:
           # Linux 平台
@@ -67,10 +68,10 @@ jobs:
           components: rust-std
 
       # 解决 macOS 常见问题
-      - name: Fix macOS SDK (Apple Silicon)
+      - name: Fix macOS SDK (Apple Silicon), Setup Xcode (Apple Silicon)
         if: matrix.os == 'macos-latest' && matrix.target == 'aarch64-apple-darwin'
         run: |
-          sudo xcode-select -s /Applications/Xcode_14.2.app/Contents/Developer
+          sudo xcode-select -s /Applications/Xcode.app/Contents/Developer
           sudo xcodebuild -license accept
 
       # 执行编译
