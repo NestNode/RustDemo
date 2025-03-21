@@ -26,9 +26,9 @@ jobs:
           - os: ubuntu-22.04
             target: x86_64-unknown-linux-musl      # 静态链接
             toolchain: "musl-tools"
-          - os: ubuntu-22.04
-            target: aarch64-unknown-linux-gnu      # ARM64 (交叉编译)
-            toolchain: "gcc-aarch64-linux-gnu"
+          # - os: ubuntu-22.04
+          #   target: aarch64-unknown-linux-gnu      # ARM64 (交叉编译)
+          #   toolchain: "gcc-aarch64-linux-gnu"
           # Windows 平台
           - os: windows-latest
             target: x86_64-pc-windows-msvc         # 原生 x64
@@ -47,6 +47,13 @@ jobs:
     steps:
       - name: 01. code checkout
         uses: actions/checkout@v4
+
+      # 配置 Rust 环境
+      - name: 02. Setup Rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: ${{ matrix.target }}
+          components: rust-std
 
       # 交叉编译工具修复
       - name: 02. Install Cross-compiler Toolchain
@@ -80,13 +87,6 @@ jobs:
       #         choco install ${{ matrix.toolchain }}  # 示例：通过 Chocolatey 安装
       #         ;;
       #     esac
-
-      # 配置 Rust 环境
-      - name: 02. Setup Rust
-        uses: dtolnay/rust-toolchain@stable
-        with:
-          targets: ${{ matrix.target }}
-          components: rust-std
 
       # 解决 macOS 常见问题
       - name: Fix macOS SDK (Apple Silicon), Setup Xcode (Apple Silicon)
