@@ -4,5 +4,5 @@ version = "0.1.0"
 edition = "2024"
 
 [dependencies]
-actix-web = "4.4"  # 使用 actix-web 作为 web 框架
-tokio = { version = "1.0", features = ["macros", "rt-multi-thread"] }  # 异步运行时
+axum = "0.8.4"
+tokio = { version = "1.0", features = ["full"] }
