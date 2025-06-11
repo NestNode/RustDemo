@@ -33,8 +33,10 @@ cargo new folderName
 # cargo add tokio@1.0 --features full
 
 # b2. 直接复制黏贴以下内容到toml [dependencies]中
-axum = "0.8.4"
-tokio = { version = "1.0", features = ["full"] }
+axum = "0.8.4" # 异步IO Web框架
+tokio = { version = "1.0", features = ["full"] } # 异步IO
+tracing = "0.1" # 日志追踪
+tracing-subscriber = { version = "0.3", features = ["env-filter"] } # 日志追踪
 # 并执行命令:
 cargo build
 ```

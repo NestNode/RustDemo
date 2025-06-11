@@ -4,5 +4,9 @@ version = "0.1.0"
 edition = "2024"
 
 [dependencies]
-axum = "0.8.4"
-tokio = { version = "1.0", features = ["full"] }
+axum = "0.8.4" # 异步IO Web框架
+tokio = { version = "1.0", features = ["full"] } # 异步IO
+tracing = "0.1" # 日志追踪
+tracing-subscriber = { version = "0.3", features = ["env-filter"] } # 日志追踪
+uuid = { version = "1.0", features = ["serde", "v4"] } # 生成唯一id
+serde = { version = "1.0", features = ["derive"] } # JSON序列化/反序列化
