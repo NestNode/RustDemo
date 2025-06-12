@@ -28,16 +28,19 @@ use uuid::Uuid;                         // 生成唯一ID
 // use tower::{BoxError, ServiceBuilder}; // 中间件构建工具
 // use tower_http::trace::TraceLayer;   // HTTP请求追踪
 
-// 待办事项数据结构
+// 存储项数据结构
 #[derive(Debug, Serialize, Clone)]
 struct Rest {
     id: Uuid,           // 唯一标识符
     data: String,       // 事项内容 (可以是json字符串)
 }
+#[derive(Debug, Deserialize)]
+struct RestRequest {
+    data: Option<String>,
+}
 
 type Db = Arc<RwLock<HashMap<Uuid, Rest>>>; // 数据库：内存存储，线程安全的HashMap，使用读写锁保护
 
-// 主异步函数，使用tokio运行时
 pub async fn factory_rest_router() -> Router {
     // 创建内存数据库（使用读写锁保护的HashMap）
     let db = Db::default();
@@ -46,44 +49,21 @@ pub async fn factory_rest_router() -> Router {
     let app = Router::new()
         .route("/rest", get(rest_id_get).post(rest_id_post))
         .route("/rest/{id}", get(rest_id_get).post(rest_id_post).patch(rest_patch).delete(rest_delete))
-        // 添加全局中间件
-        // .layer(
-        //     ServiceBuilder::new()
-        //         // 错误处理中间件：将BoxError转换为HTTP响应
-        //         .layer(HandleErrorLayer::new(|error: BoxError| async move {
-        //             if error.is::<tower::timeout::error::Elapsed>() {
-        //                 // 请求超时处理
-        //                 Ok(StatusCode::REQUEST_TIMEOUT)
-        //             } else {
-        //                 // 其他错误处理
-        //                 Err((
-        //                     StatusCode::INTERNAL_SERVER_ERROR,
-        //                     format!("未处理的内部错误: {error}"),
-        //                 ))
-        //             }
-        //         }))
-        //         .timeout(Duration::from_secs(10))  // 10秒请求超时
-        //         .layer(TraceLayer::new_for_http()) // HTTP请求追踪
-        //         .into_inner(),
-        // )
         .with_state(db); // 注入共享状态（数据库）
     app
 }
 
-// GET /rest/{id?} 获取待办事项
+// GET /rest/{id?} 获取项
 async fn rest_id_get(
     id: Option<Path<Uuid>>,       // 路径中的ID (可选, 无则获取全部)
     pagination: Query<RestGetPagination>,// 查询参数
     State(db): State<Db>          // 共享数据库状态
 ) -> impl IntoResponse {
-    // 获取读锁访问数据库
-    let rest = db.read().unwrap();
-
     match id {
+        // 有id，则查找特定ID项
         Some(Path(id)) => {
             tracing::debug!("GET /rest/{}", id);
-            
-            // 查找特定ID的待办事项
+            let rest = db.read().unwrap();
             match rest.get(&id) {
                 Some(rest) => {
                     Json(rest.clone()).into_response()
@@ -93,18 +73,16 @@ async fn rest_id_get(
                 }
             }
         }
+        // 无id，返回所有项
         None => {
             tracing::debug!("GET /rest/");
-
-            // 应用分页逻辑
+            let rest = db.read().unwrap();
             let rest = rest
                 .values()
-                .skip(pagination.offset.unwrap_or(0))         // 跳过指定偏移量
-                .take(pagination.limit.unwrap_or(usize::MAX)) // 限制返回数量
-                .cloned()                 // 克隆数据
-                .collect::<Vec<_>>();     // 收集为Vec
-
-            // 返回JSON格式的待办事项列表
+                .skip(pagination.offset.unwrap_or(0))           // 跳过指定偏移量
+                .take(pagination.limit.unwrap_or(usize::MAX))   // 限制返回数量
+                .cloned()                                       // 克隆数据
+                .collect::<Vec<_>>();                           // 收集为Vec
             Json(rest).into_response()
         }
     }
@@ -112,81 +90,64 @@ async fn rest_id_get(
 #[derive(Debug, Deserialize, Default)]
 struct RestGetPagination {
     offset: Option<usize>,       // 起始位置
-    limit: Option<usize>,        // 返回数量限制
+    limit: Option<usize>,        // 数量限制
 }
 
-// POST /rest/{id?} 创建新待办事项 TODO 检查是否已存在
+// POST /rest/{id?} 创建新项 (重复策略：覆盖，而非报错)
 async fn rest_id_post(
     id: Option<Path<Uuid>>,       // 路径中的ID (可选, 无则随机id)
     State(db): State<Db>,         // 共享数据库状态
-    Json(input): Json<RestPostJson> // JSON请求体
+    Json(input): Json<RestRequest> // JSON请求体
 ) -> impl IntoResponse {
     let id = id.map(|p| p.0).unwrap_or_else(Uuid::new_v4);
     tracing::debug!("POST /rest/{}", id);
 
-    // 创建新的待办事项
+    // 写入新项
     let rest = Rest {
         id: id,
-        data: input.data,
+        data: input.data.unwrap_or_else(String::new),
     };
-
-    // 获取写锁并插入数据库
     db.write().unwrap().insert(rest.id, rest.clone());
 
-    // 返回201 Created状态码 (RESTful规范中表示资源已被成功创建) 和创建的待办事项
-    (StatusCode::CREATED, Json(rest))
-}
-#[derive(Debug, Deserialize)]
-struct RestPostJson {
-    data: String, // 待办事项内容
+    (StatusCode::CREATED, Json(rest)) // 201 (Created状态码) 和新项
 }
 
-// PATCH /rest/{id} 更新待办事项
+// PATCH /rest/{id} 更新项 (缺失策略: 404, 而非新建)
 async fn rest_patch(
-    Path(id): Path<Uuid>,         // 路径中的ID
-    State(db): State<Db>,         // 共享数据库状态
-    Json(input): Json<RestPatchJson> // JSON请求体
+    Path(id): Path<Uuid>,           // 路径中的ID
+    State(db): State<Db>,           // 共享数据库状态
+    Json(input): Json<RestRequest>  // JSON请求体
 ) -> Result<impl IntoResponse, StatusCode> {
     tracing::debug!("PATCH /rest/{}", id);
 
-    // 查找指定ID的待办事项
+    // 查找项
     let mut rest = db
         .read()
         .unwrap()
         .get(&id)
-        .cloned()                 // 克隆数据
+        .cloned()                   // 克隆数据
         .ok_or(StatusCode::NOT_FOUND)?; // 找不到返回404
 
-    // 更新文本（如果提供了新文本）
+    // 更新项
     if let Some(text) = input.data {
         rest.data = text;
     }
-
-    // 更新数据库中的待办事项
     db.write().unwrap().insert(rest.id, rest.clone());
 
-    // 返回更新后的待办事项
     Ok(Json(rest))
 }
-#[derive(Debug, Deserialize)]
-struct RestPatchJson {
-    data: Option<String>,
-}
 
-// DELETE /rest/{id} 删除待办事项
+// DELETE /rest/{id} 删除存储项
 async fn rest_delete(
-    Path(id): Path<Uuid>,         // 路径中的ID
-    State(db): State<Db>          // 共享数据库状态
+    Path(id): Path<Uuid>,           // 路径中的ID
+    State(db): State<Db>            // 共享数据库状态
 ) -> impl IntoResponse {
     tracing::debug!("DELETE /rest/{}", id);
 
-    // 尝试删除指定ID的待办事项
+    // 删除指定ID项
     if db.write().unwrap().remove(&id).is_some() {
-        // 成功删除返回204 No Content
-        // 204 No Content 表示删除成功但无需返回内容，符合 RESTful 规范
-        StatusCode::NO_CONTENT
+        StatusCode::NO_CONTENT      // 204 (No Content) 表示删除成功但无需返回内容
     } else {
-        // 找不到返回404 Not Found
-        StatusCode::NOT_FOUND
+        StatusCode::NOT_FOUND       // 404 (Not Found) 表示找不到
     }
 }

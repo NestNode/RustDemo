@@ -22,6 +22,7 @@ mod api;
 // use std::{collections::HashMap, sync::{Arc, RwLock}};
 
 
+// 主异步函数，使用tokio运行时
 #[tokio::main]
 async fn main() {
     api::test::test_fn();
