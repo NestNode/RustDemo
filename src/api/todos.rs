@@ -52,7 +52,7 @@ pub async fn factory_todos_router() -> Router {
     app
 }
 
-// GET /todos/{id?} 获取项
+/// GET /todos/{id?} 获取项
 async fn todos_id_get(
     id: Option<Path<Uuid>>,       // 路径中的ID (可选, 无则获取全部)
     pagination: Query<TodosGetPagination>,// 查询参数
@@ -88,14 +88,14 @@ async fn todos_id_get(
 }
 #[derive(Debug, Deserialize, Default)]
 struct TodosGetPagination {
-    offset: Option<usize>,       // 起始位置
-    limit: Option<usize>,        // 数量限制
+    offset: Option<usize>,          // 起始位置
+    limit: Option<usize>,           // 数量限制
 }
 
-// POST /todos/{id?} 创建新项 (重复策略：覆盖，而非报错)
+/// POST /todos/{id?} 创建新项 (重复策略：覆盖，而非报错)
 async fn todos_id_post(
-    id: Option<Path<Uuid>>,       // 路径中的ID (可选, 无则随机id)
-    State(db): State<Db>,         // 共享数据库状态
+    id: Option<Path<Uuid>>,         // 路径中的ID (可选, 无则随机id)
+    State(db): State<Db>,           // 共享数据库状态
     Json(input): Json<TodosRequest> // JSON请求体
 ) -> impl IntoResponse {
     let id = id.map(|p| p.0).unwrap_or_else(Uuid::new_v4);
@@ -112,7 +112,7 @@ async fn todos_id_post(
     (StatusCode::CREATED, Json(todo)) // 201 (Created状态码) 和新项
 }
 
-// PATCH /todos/{id} 更新项 (缺失策略: 404, 而非新建)
+/// PATCH /todos/{id} 更新项 (缺失策略: 404, 而非新建)
 async fn todos_id_patch(
     Path(id): Path<Uuid>,           // 路径中的ID
     State(db): State<Db>,           // 共享数据库状态
@@ -140,7 +140,7 @@ async fn todos_id_patch(
     Ok(Json(todo))
 }
 
-// DELETE /todos/{id} 删除待办事项
+/// DELETE /todos/{id} 删除待办事项
 async fn todos_id_delete(
     Path(id): Path<Uuid>,           // 路径中的ID
     State(db): State<Db>            // 共享数据库状态
