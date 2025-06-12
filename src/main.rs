@@ -39,11 +39,12 @@ async fn main() {
     // axum
     let app = Router::new() // 路由
         .route("/", get(root)) // root
-        .merge(api::todos::use_todos_router().await); // todos
+        .merge(api::todos::factory_todos_router().await) // todos
+        .merge(api::rest::factory_rest_router().await); // rest
     let listener = tokio::net::TcpListener::bind("127.0.0.1:24042") // 绑定TCP监听端口
         .await
         .unwrap();
-    tracing::info!("listening2 on {}", listener.local_addr().unwrap());
+    tracing::info!("listening on {}", listener.local_addr().unwrap());
     axum::serve(listener, app).await.unwrap(); // 启动HTTP服务器
 }
 
