@@ -51,7 +51,7 @@ pub async fn factory_todos_router() -> Router {
     // axum
     let app = Router::new()
         .route("/todos", get(todos_id_get).post(todos_id_post))
-        .route("/todos/{id}", get(todos_id_get).post(todos_id_post).patch(todos_id_patch).delete(todos_id_delete))
+        .route("/todos/{id}", get(todos_id_get).put(todos_id_put).post(todos_id_post).patch(todos_id_patch).delete(todos_id_delete))
         .with_state(db); // 注入共享状态（数据库）
     app
 }
@@ -105,7 +105,32 @@ struct TodosGetPagination {
 }
 
 /**
- * POST /todos/{id?} 创建新项 (重复策略：覆盖，而非报错)
+ * PUT /todos/{id?} 幂等创建/修改项 (重复策略：覆盖，而非报错)
+ * 
+ * - `id` 路径中的ID (可选, 无则随机id)
+ * - `db` 共享数据库状态
+ * - `input` JSON请求体
+ */
+async fn todos_id_put(
+    id: Option<Path<Uuid>>,
+    State(db): State<Db>,
+    Json(input): Json<TodosRequest>
+) -> impl IntoResponse {
+    let id = id.map(|p| p.0).unwrap_or_else(Uuid::new_v4);
+    tracing::debug!("PUT /todos/{}", id);
+
+    let todo = Todo {
+        id: id,
+        text: input.text.unwrap_or_else(String::new),
+        completed: input.completed.unwrap_or(false),
+    };
+    db.write().unwrap().insert(todo.id, todo.clone());
+
+    (StatusCode::CREATED, Json(todo))
+}
+
+/**
+ * POST /todos/{id?} 创建新项 (重复策略：409)
  * 
  * - `id` 路径中的ID (可选, 无则随机id)
  * - `db` 共享数据库状态
@@ -117,16 +142,29 @@ async fn todos_id_post(
     Json(input): Json<TodosRequest>
 ) -> impl IntoResponse {
     let id = id.map(|p| p.0).unwrap_or_else(Uuid::new_v4);
-    tracing::debug!("POST /todos/{}", id);
+    tracing::debug!("POST /todo/{}", id);
 
-    let todo = Todo {
-        id: id,
-        text: input.text.unwrap_or_else(String::new),
-        completed: input.completed.unwrap_or(false),
-    };
-    db.write().unwrap().insert(todo.id, todo.clone());
+    let todo = db
+        .read()
+        .unwrap()
+        .get(&id)
+        .cloned();
 
-    (StatusCode::CREATED, Json(todo))
+    match todo {
+        Some(todo) => {
+            (StatusCode::CONFLICT, Json(todo))
+        },
+        None => {
+            let todo = Todo {
+                id: id,
+                text: input.text.unwrap_or_else(String::new),
+                completed: input.completed.unwrap_or(false),
+            };
+            db.write().unwrap().insert(todo.id, todo.clone());
+        
+            (StatusCode::CREATED, Json(todo))
+        }
+    }
 }
 
 /**

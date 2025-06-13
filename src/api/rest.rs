@@ -51,7 +51,7 @@ pub async fn factory_rest_router() -> Router {
     // axum
     let app = Router::new()
         .route("/rest", get(rest_id_get).post(rest_id_post))
-        .route("/rest/{id}", get(rest_id_get).post(rest_id_post).patch(rest_patch).delete(rest_delete))
+        .route("/rest/{id}", get(rest_id_get).put(rest_id_put).post(rest_id_post).patch(rest_patch).delete(rest_delete))
         .with_state(db); // 注入共享状态（数据库）
     app
 }
@@ -105,7 +105,31 @@ struct RestGetPagination {
 }
 
 /**
- * POST /rest/{id?} 创建新项 (重复策略：覆盖，而非报错)
+ * PUT /rest/{id?} 幂等创建/修改项 (重复策略：覆盖，而非报错)
+ * 
+ * - `id` 路径中的ID (可选, 无则随机id)
+ * - `db` 共享数据库状态
+ * - `input` JSON请求体
+ */
+async fn rest_id_put(
+    id: Option<Path<Uuid>>,
+    State(db): State<Db>,
+    Json(input): Json<RestRequest>
+) -> impl IntoResponse {
+    let id = id.map(|p| p.0).unwrap_or_else(Uuid::new_v4);
+    tracing::debug!("PUT /rest/{}", id);
+
+    let rest = Rest {
+        id: id,
+        data: input.data.unwrap_or_else(String::new),
+    };
+    db.write().unwrap().insert(rest.id, rest.clone());
+
+    (StatusCode::CREATED, Json(rest))
+}
+
+/**
+ * POST /rest/{id?} 创建新项 (重复策略：409)
  * 
  * - `id` 路径中的ID (可选, 无则随机id)
  * - `db` 共享数据库状态
@@ -119,13 +143,26 @@ async fn rest_id_post(
     let id = id.map(|p| p.0).unwrap_or_else(Uuid::new_v4);
     tracing::debug!("POST /rest/{}", id);
 
-    let rest = Rest {
-        id: id,
-        data: input.data.unwrap_or_else(String::new),
-    };
-    db.write().unwrap().insert(rest.id, rest.clone());
+    let rest = db
+        .read()
+        .unwrap()
+        .get(&id)
+        .cloned();
 
-    (StatusCode::CREATED, Json(rest))
+    match rest {
+        Some(rest) => {
+            (StatusCode::CONFLICT, Json(rest))
+        },
+        None => {
+            let rest = Rest {
+                id: id,
+                data: input.data.unwrap_or_else(String::new),
+            };
+            db.write().unwrap().insert(rest.id, rest.clone());
+        
+            (StatusCode::CREATED, Json(rest))
+        }
+    }
 }
 
 /**
