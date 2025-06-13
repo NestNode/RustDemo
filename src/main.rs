@@ -6,6 +6,7 @@ use axum::{
     routing::{get},
     Router
 };
+use tower_http::cors::{Any, CorsLayer};
 use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt}; // 日志订阅系统
 mod api;
 
@@ -25,11 +26,16 @@ async fn main() {
         .init(); // 初始化
 
     // axum
+    let cors = CorsLayer::new()
+        .allow_origin(Any) // 允许任意来源，开发阶段可用，生产建议指定域名
+        .allow_methods(Any)
+        .allow_headers(Any);
     let app = Router::new()
         .route("/", get(api::test::root))
         .route("/heartbeat", get(api::heartbeat::get_heartbeat))
         .merge(api::todos::factory_todos_router().await)
-        .merge(api::rest::factory_rest_router().await);
+        .merge(api::rest::factory_rest_router().await)
+        .layer(cors);
     let listener = tokio::net::TcpListener::bind("127.0.0.1:24042") // 绑定TCP监听端口
         .await
         .unwrap();
