@@ -19,6 +19,7 @@ use axum::{
     Json, Router,                       // JSON处理、路由器
 };
 use serde::{Deserialize, Serialize};    // JSON序列化/反序列化
+use serde_json::Value;                  // 支持任意JSON数据
 use std::{                              // 标准库
     collections::HashMap,               // 内存存储数据结构
     sync::{Arc, RwLock},                // 线程安全共享指针和读写锁
@@ -33,15 +34,15 @@ use uuid::Uuid;                         // 生成唯一ID
 struct Rest {
     /// 唯一标识符
     id: Uuid,
-    /// 事项内容 (可以是json字符串)
-    data: String,
+    /// 事项内容 (可以是任意json项(object/string/...))
+    data: Value,
 }
 /// 数据库。`原子计数(多线程多所有权安全)<读写锁<HashMap(内存存储)>>`
 type Db = Arc<RwLock<HashMap<Uuid, Rest>>>;
 
 #[derive(Debug, Deserialize)]
 struct RestRequest {
-    data: Option<String>,
+    data: Option<Value>,
 }
 
 /// 创建 RESTful API 路由
@@ -121,7 +122,7 @@ async fn rest_id_put(
 
     let rest = Rest {
         id: id,
-        data: input.data.unwrap_or_else(String::new),
+        data: input.data.unwrap_or(Value::Null),
     };
     db.write().unwrap().insert(rest.id, rest.clone());
 
@@ -156,7 +157,7 @@ async fn rest_id_post(
         None => {
             let rest = Rest {
                 id: id,
-                data: input.data.unwrap_or_else(String::new),
+                data: input.data.unwrap_or(Value::Null),
             };
             db.write().unwrap().insert(rest.id, rest.clone());
         
@@ -186,8 +187,8 @@ async fn rest_patch(
         .cloned() // 克隆数据
         .ok_or(StatusCode::NOT_FOUND)?;
 
-    if let Some(text) = input.data {
-        rest.data = text;
+    if let Some(val) = input.data {
+        rest.data = val;
     }
     db.write().unwrap().insert(rest.id, rest.clone());
 
