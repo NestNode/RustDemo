@@ -4,5 +4,6 @@
 //! 符合 RESTful 风格
 
 pub mod test;
+pub mod heartbeat;
 pub mod todos;
 pub mod rest;

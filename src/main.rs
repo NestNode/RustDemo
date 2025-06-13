@@ -27,6 +27,7 @@ async fn main() {
     // axum
     let app = Router::new()
         .route("/", get(api::test::root))
+        .route("/heartbeat", get(api::heartbeat::get_heartbeat))
         .merge(api::todos::factory_todos_router().await)
         .merge(api::rest::factory_rest_router().await);
     let listener = tokio::net::TcpListener::bind("127.0.0.1:24042") // 绑定TCP监听端口
