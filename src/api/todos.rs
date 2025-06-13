@@ -25,26 +25,30 @@ use uuid::Uuid;                         // 生成唯一ID
 // use tower::{BoxError, ServiceBuilder}; // 中间件构建工具
 // use tower_http::trace::TraceLayer;   // HTTP请求追踪
 
-// 待办事项数据结构
+/// 待办事项数据结构
 #[derive(Debug, Serialize, Clone)]
 struct Todo {
-    id: Uuid,           // 唯一标识符
-    text: String,       // 事项内容
-    completed: bool,    // 完成状态
+    /// 唯一标识符
+    id: Uuid,
+    /// 事项内容
+    text: String,
+    /// 完成状态
+    completed: bool,
 }
+/// 数据库。`原子计数(多线程多所有权安全)<读写锁<HashMap(内存存储)>>`
+type Db = Arc<RwLock<HashMap<Uuid, Todo>>>;
+
 #[derive(Debug, Deserialize)]
 struct TodosRequest {
     text: Option<String>,
     completed: Option<bool>,
 }
 
-type Db = Arc<RwLock<HashMap<Uuid, Todo>>>; // 数据库：内存存储，线程安全的HashMap，使用读写锁保护
-
+/// 创建 RESTful API 路由
 pub async fn factory_todos_router() -> Router {
-    // 创建内存数据库（使用读写锁保护的HashMap）
     let db = Db::default();
 
-    // 构建路由和中间件
+    // axum
     let app = Router::new()
         .route("/todos", get(todos_id_get).post(todos_id_post))
         .route("/todos/{id}", get(todos_id_get).post(todos_id_post).patch(todos_id_patch).delete(todos_id_delete))
@@ -52,11 +56,17 @@ pub async fn factory_todos_router() -> Router {
     app
 }
 
-/// GET /todos/{id?} 获取项
+/**
+ * GET /todos/{id?} 获取项
+ * 
+ * - `id` 路径中的ID (可选, 无则获取全部)
+ * - `pagination` 查询参数
+ * - `db` 共享数据库状态
+ */
 async fn todos_id_get(
-    id: Option<Path<Uuid>>,       // 路径中的ID (可选, 无则获取全部)
-    pagination: Query<TodosGetPagination>,// 查询参数
-    State(db): State<Db>          // 共享数据库状态
+    id: Option<Path<Uuid>>,
+    pagination: Query<TodosGetPagination>, 
+    State(db): State<Db>
 ) -> impl IntoResponse {
     match id {
         // 有id，则查找特定ID项
@@ -88,20 +98,27 @@ async fn todos_id_get(
 }
 #[derive(Debug, Deserialize, Default)]
 struct TodosGetPagination {
-    offset: Option<usize>,          // 起始位置
-    limit: Option<usize>,           // 数量限制
+    /// 起始位置
+    offset: Option<usize>,
+    /// 数量限制
+    limit: Option<usize>,
 }
 
-/// POST /todos/{id?} 创建新项 (重复策略：覆盖，而非报错)
+/**
+ * POST /todos/{id?} 创建新项 (重复策略：覆盖，而非报错)
+ * 
+ * - `id` 路径中的ID (可选, 无则随机id)
+ * - `db` 共享数据库状态
+ * - `input` JSON请求体
+ */
 async fn todos_id_post(
-    id: Option<Path<Uuid>>,         // 路径中的ID (可选, 无则随机id)
-    State(db): State<Db>,           // 共享数据库状态
-    Json(input): Json<TodosRequest> // JSON请求体
+    id: Option<Path<Uuid>>,
+    State(db): State<Db>,
+    Json(input): Json<TodosRequest>
 ) -> impl IntoResponse {
     let id = id.map(|p| p.0).unwrap_or_else(Uuid::new_v4);
     tracing::debug!("POST /todos/{}", id);
 
-    // 写入新项
     let todo = Todo {
         id: id,
         text: input.text.unwrap_or_else(String::new),
@@ -109,26 +126,30 @@ async fn todos_id_post(
     };
     db.write().unwrap().insert(todo.id, todo.clone());
 
-    (StatusCode::CREATED, Json(todo)) // 201 (Created状态码) 和新项
+    (StatusCode::CREATED, Json(todo))
 }
 
-/// PATCH /todos/{id} 更新项 (缺失策略: 404, 而非新建)
+/**
+ * PATCH /todos/{id} 更新项 (缺失策略: 404, 而非新建)
+ * 
+ * - `id` 路径中的ID (可选, 无则随机id)
+ * - `db` 共享数据库状态
+ * - `input` JSON请求体
+ */
 async fn todos_id_patch(
-    Path(id): Path<Uuid>,           // 路径中的ID
-    State(db): State<Db>,           // 共享数据库状态
-    Json(input): Json<TodosRequest> // JSON请求体
+    Path(id): Path<Uuid>,
+    State(db): State<Db>,
+    Json(input): Json<TodosRequest>
 ) -> Result<impl IntoResponse, StatusCode> {
     tracing::debug!("PATCH /todos/{}", id);
 
-    // 查找项
     let mut todo = db
         .read()
         .unwrap()
         .get(&id)
-        .cloned()                   // 克隆数据
-        .ok_or(StatusCode::NOT_FOUND)?; // 找不到返回404
+        .cloned() // 克隆数据
+        .ok_or(StatusCode::NOT_FOUND)?;
 
-    // 更新项
     if let Some(text) = input.text {
         todo.text = text;
     }
@@ -140,17 +161,21 @@ async fn todos_id_patch(
     Ok(Json(todo))
 }
 
-/// DELETE /todos/{id} 删除待办事项
-async fn todos_id_delete(
-    Path(id): Path<Uuid>,           // 路径中的ID
-    State(db): State<Db>            // 共享数据库状态
+/**
+ * DELETE /todos/{id} 删除待办事项
+ * 
+ * - `id` 路径中的ID
+ * - `db` 共享数据库状态
+ */
+async fn todos_id_delete (
+    Path(id): Path<Uuid>,
+    State(db): State<Db>
 ) -> impl IntoResponse {
     tracing::debug!("DELETE /todos/{}", id);
 
-    // 删除指定ID项
     if db.write().unwrap().remove(&id).is_some() {
-        StatusCode::NO_CONTENT      // 204 (No Content) 表示删除成功但无需返回内容
+        StatusCode::NO_CONTENT
     } else {
-        StatusCode::NOT_FOUND       // 404 (Not Found) 表示找不到
+        StatusCode::NOT_FOUND
     }
 }

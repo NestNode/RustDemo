@@ -28,24 +28,27 @@ use uuid::Uuid;                         // 生成唯一ID
 // use tower::{BoxError, ServiceBuilder}; // 中间件构建工具
 // use tower_http::trace::TraceLayer;   // HTTP请求追踪
 
-// 存储项数据结构
+/// 存储项数据结构
 #[derive(Debug, Serialize, Clone)]
 struct Rest {
-    id: Uuid,           // 唯一标识符
-    data: String,       // 事项内容 (可以是json字符串)
+    /// 唯一标识符
+    id: Uuid,
+    /// 事项内容 (可以是json字符串)
+    data: String,
 }
+/// 数据库。`原子计数(多线程多所有权安全)<读写锁<HashMap(内存存储)>>`
+type Db = Arc<RwLock<HashMap<Uuid, Rest>>>;
+
 #[derive(Debug, Deserialize)]
 struct RestRequest {
     data: Option<String>,
 }
 
-type Db = Arc<RwLock<HashMap<Uuid, Rest>>>; // 数据库：内存存储，线程安全的HashMap，使用读写锁保护
-
+/// 创建 RESTful API 路由
 pub async fn factory_rest_router() -> Router {
-    // 创建内存数据库（使用读写锁保护的HashMap）
     let db = Db::default();
 
-    // 构建路由和中间件
+    // axum
     let app = Router::new()
         .route("/rest", get(rest_id_get).post(rest_id_post))
         .route("/rest/{id}", get(rest_id_get).post(rest_id_post).patch(rest_patch).delete(rest_delete))
@@ -53,11 +56,17 @@ pub async fn factory_rest_router() -> Router {
     app
 }
 
-/// GET /rest/{id?} 获取项
+/**
+ * GET /rest/{id?} 获取项
+ * 
+ * - `id` 路径中的ID (可选, 无则获取全部)
+ * - `pagination` 查询参数
+ * - `db` 共享数据库状态
+ */
 async fn rest_id_get(
-    id: Option<Path<Uuid>>,       // 路径中的ID (可选, 无则获取全部)
-    pagination: Query<RestGetPagination>,// 查询参数
-    State(db): State<Db>          // 共享数据库状态
+    id: Option<Path<Uuid>>,
+    pagination: Query<RestGetPagination>,
+    State(db): State<Db>
 ) -> impl IntoResponse {
     match id {
         // 有id，则查找特定ID项
@@ -89,46 +98,57 @@ async fn rest_id_get(
 }
 #[derive(Debug, Deserialize, Default)]
 struct RestGetPagination {
-    offset: Option<usize>,          // 起始位置
-    limit: Option<usize>,           // 数量限制
+    /// 起始位置
+    offset: Option<usize>,
+    /// 数量限制
+    limit: Option<usize>,
 }
 
-/// POST /rest/{id?} 创建新项 (重复策略：覆盖，而非报错)
+/**
+ * POST /rest/{id?} 创建新项 (重复策略：覆盖，而非报错)
+ * 
+ * - `id` 路径中的ID (可选, 无则随机id)
+ * - `db` 共享数据库状态
+ * - `input` JSON请求体
+ */
 async fn rest_id_post(
-    id: Option<Path<Uuid>>,         // 路径中的ID (可选, 无则随机id)
-    State(db): State<Db>,           // 共享数据库状态
-    Json(input): Json<RestRequest>  // JSON请求体
+    id: Option<Path<Uuid>>,
+    State(db): State<Db>,
+    Json(input): Json<RestRequest>
 ) -> impl IntoResponse {
     let id = id.map(|p| p.0).unwrap_or_else(Uuid::new_v4);
     tracing::debug!("POST /rest/{}", id);
 
-    // 写入新项
     let rest = Rest {
         id: id,
         data: input.data.unwrap_or_else(String::new),
     };
     db.write().unwrap().insert(rest.id, rest.clone());
 
-    (StatusCode::CREATED, Json(rest)) // 201 (Created状态码) 和新项
+    (StatusCode::CREATED, Json(rest))
 }
 
-/// PATCH /rest/{id} 更新项 (缺失策略: 404, 而非新建)
+/**
+ * PATCH /rest/{id} 更新项 (缺失策略: 404, 而非新建)
+ * 
+ * - `id` 路径中的ID (可选, 无则随机id)
+ * - `db` 共享数据库状态
+ * - `input` JSON请求体
+ */
 async fn rest_patch(
-    Path(id): Path<Uuid>,           // 路径中的ID
-    State(db): State<Db>,           // 共享数据库状态
-    Json(input): Json<RestRequest>  // JSON请求体
+    Path(id): Path<Uuid>,
+    State(db): State<Db>,
+    Json(input): Json<RestRequest>
 ) -> Result<impl IntoResponse, StatusCode> {
     tracing::debug!("PATCH /rest/{}", id);
 
-    // 查找项
     let mut rest = db
         .read()
         .unwrap()
         .get(&id)
-        .cloned()                   // 克隆数据
-        .ok_or(StatusCode::NOT_FOUND)?; // 找不到返回404
+        .cloned() // 克隆数据
+        .ok_or(StatusCode::NOT_FOUND)?;
 
-    // 更新项
     if let Some(text) = input.data {
         rest.data = text;
     }
@@ -137,17 +157,21 @@ async fn rest_patch(
     Ok(Json(rest))
 }
 
-/// DELETE /rest/{id} 删除存储项
+/**
+ * DELETE /rest/{id} 删除待办事项
+ * 
+ * - `id` 路径中的ID
+ * - `db` 共享数据库状态
+ */
 async fn rest_delete(
-    Path(id): Path<Uuid>,           // 路径中的ID
-    State(db): State<Db>            // 共享数据库状态
+    Path(id): Path<Uuid>,           
+    State(db): State<Db>            
 ) -> impl IntoResponse {
     tracing::debug!("DELETE /rest/{}", id);
 
-    // 删除指定ID项
     if db.write().unwrap().remove(&id).is_some() {
-        StatusCode::NO_CONTENT      // 204 (No Content) 表示删除成功但无需返回内容
+        StatusCode::NO_CONTENT
     } else {
-        StatusCode::NOT_FOUND       // 404 (Not Found) 表示找不到
+        StatusCode::NOT_FOUND
     }
 }
