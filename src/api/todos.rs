@@ -28,15 +28,15 @@ use uuid::Uuid;                         // 生成唯一ID
 /// 待办事项数据结构
 #[derive(Debug, Serialize, Clone)]
 struct Todo {
-    /// 唯一标识符
-    id: Uuid,
+    /// 唯一标识符 (uuid或其他字符串，一般前者配合hashmap会更好，字符串长度应限制?)
+    id: String,
     /// 事项内容
     text: String,
     /// 完成状态
     completed: bool,
 }
 /// 数据库。`原子计数(多线程多所有权安全)<读写锁<HashMap(内存存储)>>`
-type Db = Arc<RwLock<HashMap<Uuid, Todo>>>;
+type Db = Arc<RwLock<HashMap<String, Todo>>>;
 
 #[derive(Debug, Deserialize)]
 struct TodosRequest {
@@ -64,7 +64,7 @@ pub async fn factory_todos_router() -> Router {
  * - `db` 共享数据库状态
  */
 async fn todos_id_get(
-    id: Option<Path<Uuid>>,
+    id: Option<Path<String>>,
     pagination: Query<TodosGetPagination>, 
     State(db): State<Db>
 ) -> impl IntoResponse {
@@ -112,11 +112,11 @@ struct TodosGetPagination {
  * - `input` JSON请求体
  */
 async fn todos_id_put(
-    id: Option<Path<Uuid>>,
+    id: Option<Path<String>>,
     State(db): State<Db>,
     Json(input): Json<TodosRequest>
 ) -> impl IntoResponse {
-    let id = id.map(|p| p.0).unwrap_or_else(Uuid::new_v4);
+    let id = id.map(|p| p.0).unwrap_or_else(|| Uuid::new_v4().to_string());
     tracing::debug!("PUT /todos/{}", id);
 
     let todo = Todo {
@@ -124,7 +124,7 @@ async fn todos_id_put(
         text: input.text.unwrap_or_else(String::new),
         completed: input.completed.unwrap_or(false),
     };
-    db.write().unwrap().insert(todo.id, todo.clone());
+    db.write().unwrap().insert(todo.id.clone(), todo.clone());
 
     (StatusCode::CREATED, Json(todo))
 }
@@ -137,11 +137,11 @@ async fn todos_id_put(
  * - `input` JSON请求体
  */
 async fn todos_id_post(
-    id: Option<Path<Uuid>>,
+    id: Option<Path<String>>,
     State(db): State<Db>,
     Json(input): Json<TodosRequest>
 ) -> impl IntoResponse {
-    let id = id.map(|p| p.0).unwrap_or_else(Uuid::new_v4);
+    let id = id.map(|p| p.0).unwrap_or_else(|| Uuid::new_v4().to_string());
     tracing::debug!("POST /todo/{}", id);
 
     let todo = db
@@ -160,7 +160,7 @@ async fn todos_id_post(
                 text: input.text.unwrap_or_else(String::new),
                 completed: input.completed.unwrap_or(false),
             };
-            db.write().unwrap().insert(todo.id, todo.clone());
+            db.write().unwrap().insert(todo.id.clone(), todo.clone());
         
             (StatusCode::CREATED, Json(todo))
         }
@@ -175,7 +175,7 @@ async fn todos_id_post(
  * - `input` JSON请求体
  */
 async fn todos_id_patch(
-    Path(id): Path<Uuid>,
+    Path(id): Path<String>,
     State(db): State<Db>,
     Json(input): Json<TodosRequest>
 ) -> Result<impl IntoResponse, StatusCode> {
@@ -194,7 +194,7 @@ async fn todos_id_patch(
     if let Some(completed) = input.completed {
         todo.completed = completed;
     }
-    db.write().unwrap().insert(todo.id, todo.clone());
+    db.write().unwrap().insert(todo.id.clone(), todo.clone());
 
     Ok(Json(todo))
 }
@@ -206,7 +206,7 @@ async fn todos_id_patch(
  * - `db` 共享数据库状态
  */
 async fn todos_id_delete (
-    Path(id): Path<Uuid>,
+    Path(id): Path<String>,
     State(db): State<Db>
 ) -> impl IntoResponse {
     tracing::debug!("DELETE /todos/{}", id);
