@@ -32,7 +32,7 @@ async fn main() {
         .allow_headers(Any);
     let app = Router::new()
         .route("/", get(api::test::root))
-        .route("/heartbeat", get(api::heartbeat::get_heartbeat))
+        .merge(api::heartbeat::factory_utils_router())
         .merge(api::todos::factory_todos_router().await)
         .merge(api::rest::factory_rest_router().await)
         .layer(cors);
