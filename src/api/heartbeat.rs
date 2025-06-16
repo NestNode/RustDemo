@@ -45,7 +45,7 @@ static ONLINE_STATE: Lazy<OnlineState> = Lazy::new(|| OnlineState {
 /// 包括心跳检测和常用工具等
 pub fn factory_utils_router() -> Router {
     // 启动清理任务
-    start_cleanup_task();
+    // start_cleanup_task();
 
     let app = Router::new()
         .route("/heartbeat", get(get_heartbeat));
@@ -109,8 +109,8 @@ pub async fn get_heartbeat(
     (new_cookie_jar, (StatusCode::OK, Json(resp)))
 }
 
-/// 后台任务，定时清理不活跃用户
-/*pub fn start_cleanup_task() {
+/*/// 后台任务，定时清理不活跃用户
+pub fn start_cleanup_task() {
     tokio::spawn(async move {
         let mut interval = tokio::time::interval(Duration::from_secs(10));
         loop {
