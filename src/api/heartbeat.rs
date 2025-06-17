@@ -6,24 +6,19 @@ use axum::{
     routing::get,
     Router,
     // extract::ConnectInfo,
-    Extension,
+    // Extension,
 };
 // use axum::extract::CookieJar;
 use axum_extra::extract::{
-    cookie::{Cookie, SameSite},
+    cookie::{Cookie},
     CookieJar,
 };
-use serde_json::json;
+use serde_json::{json};
 use once_cell::sync::Lazy;
 use tokio::sync::RwLock;
 use uuid::Uuid;
 use std::{
-    time::{Duration, Instant},
-    collections::HashMap,
-    // net::SocketAddr,
-    sync::{
-        atomic::{AtomicU32, Ordering},
-    },
+    collections::HashMap, sync::atomic::{AtomicU32, Ordering}, time::{Duration, Instant}
 };
 
 /// 工具路由
@@ -31,7 +26,7 @@ use std::{
 /// 包括心跳检测和常用工具等
 pub fn factory_utils_router() -> Router {
     // 启动清理任务
-    // start_cleanup_task();
+    start_cleanup_task(None);
 
     let app = Router::new()
         .route("/heartbeat", get(get_heartbeat));
@@ -66,32 +61,39 @@ static ONLINE_STATE: Lazy<OnlineState> = Lazy::new(|| OnlineState {
 pub async fn get_heartbeat(
     cookie_jar: CookieJar,
 ) -> impl IntoResponse {
-    // 新会话id
-    let new_cookie_jar = if let Some(cookie) = cookie_jar.get("session_id") {
-        tracing::debug!("GET /heartbeat, cookies get {}", cookie.value().to_string());
+    // 获取会话id
+    let (new_session_id, new_cookie_jar) =
+        if let Some(cookie) = cookie_jar.get("session_id") { // 客户端带会话id
+            let cookie_value = cookie.value().to_string();
+            let user_activity = ONLINE_STATE.user_activity_time.read().await;
 
-        // TODO ONLINE_STATE中如果找到id，则更新其时间，否则重新分配uuid
-        
-        cookie_jar
-    } else {
-        let new_id = Uuid::new_v4().to_string();
-        tracing::debug!("GET /heartbeat, Cookies: create {}", new_id);
-        let cookie = Cookie::new("session_id", new_id.clone());
-        
-        // TODO ONLINE_STATE插入新用户，并增加用户数
-        
-        cookie_jar.add(cookie)
-    };
+            if user_activity.contains_key(&cookie_value) { // 服务器有此id，沿用
+                tracing::debug!("GET /heartbeat, cookies get {}", cookie_value);
+                (cookie_value, cookie_jar)
+            }
+            else { // 服务端无此id，需重新分配
+                let new_id = Uuid::new_v4().to_string();
+                let cookie = Cookie::new("session_id", new_id.clone());
+                tracing::warn!("GET /heartbeat, cookies reCreate {}", new_id);
+                (new_id, cookie_jar.add(cookie.clone()))
+            }
+        }
+        else { // 客户端不带会话id
+            let new_id = Uuid::new_v4().to_string();
+            let cookie = Cookie::new("session_id", new_id.clone());
+            tracing::debug!("GET /heartbeat, Cookies: create {}", new_id);
+            (new_id, cookie_jar.add(cookie.clone()))
+        };
 
     // 更新用户活跃时间
-    // {
-    //     let mut user_activity = ONLINE_STATE.user_activity_time.write().await;
-        
-    //     // 如果是新用户，增加在线计数
-    //     if user_activity.insert(session_id.clone(), Instant::now()).is_none() {
-    //         ONLINE_STATE.user_activity_count.fetch_add(1, Ordering::Relaxed);
-    //     }
-    // }
+    {
+        let mut user_activity_time = ONLINE_STATE.user_activity_time.write().await;
+        // insert会返回被替换值，若None则表示之前没有这个键，即这是个新用户
+        let old_value = user_activity_time.insert(new_session_id.clone(), Instant::now());
+        if old_value.is_none() {
+            ONLINE_STATE.user_activity_count.fetch_add(1, Ordering::Relaxed);
+        }
+    }
 
     let resp = json!({
         "status": "alive",
@@ -104,24 +106,30 @@ pub async fn get_heartbeat(
     (new_cookie_jar, (StatusCode::OK, Json(resp)))
 }
 
-/*/// TODO 后台任务，定时清理不活跃用户
+/// TODO 后台任务，定时清理不活跃用户
 /// 
 /// 检测到成出时间的用户，删除之，并使活跃用户数-1
 
 
 /// 后台任务，定时清理不活跃用户
-pub fn start_cleanup_task() {
+/// 
+/// 检测到成出时间的用户，删除之，并使活跃用户数-1
+/// 
+/// args
+/// - timeout_time 超时时间 (默认10)
+/// - interval_time 检测频率 (略，默认5)
+pub fn start_cleanup_task(timeout: Option<u64>) {
     tokio::spawn(async move {
-        let mut interval = tokio::time::interval(Duration::from_secs(10));
+        let mut interval = tokio::time::interval(Duration::from_secs(5));
         loop {
             interval.tick().await;
             
             // 移除超过30秒不活跃的用户
-            let mut user_activity = ONLINE_STATE.user_activity_time.write().await;
-            let before_count = user_activity.len();
+            let mut user_activity_time = ONLINE_STATE.user_activity_time.write().await;
+            let before_count = user_activity_time.len();
             let now = Instant::now();
-            user_activity.retain(|_, &mut last_active| now.duration_since(last_active) < Duration::from_secs(30));
-            let after_count = user_activity.len();
+            user_activity_time.retain(|_, &mut last_active| now.duration_since(last_active) < Duration::from_secs(timeout.unwrap_or(10)));
+            let after_count = user_activity_time.len();
             
             // 如果有变化则更新计数器
             if before_count != after_count {
@@ -129,4 +137,4 @@ pub fn start_cleanup_task() {
             }
         }
     });
-}*/
+}

@@ -3,7 +3,8 @@
 //! 负责服务器配置和启动
 
 use axum::{
-    routing::{get},
+    http::{HeaderName, HeaderValue, Method},
+    routing::get,
     Router
 };
 use tower_http::cors::{Any, CorsLayer};
@@ -27,9 +28,24 @@ async fn main() {
 
     // axum
     let cors = CorsLayer::new()
-        .allow_origin(Any) // 允许任意来源，开发阶段可用，生产建议指定域名
-        .allow_methods(Any)
-        .allow_headers(Any);
+        .allow_origin([
+            "http://localhost".parse::<HeaderValue>().unwrap(),
+            "http://localhost:3060".parse::<HeaderValue>().unwrap(),
+        ]) // Any 允许任意来源，开发阶段可用，生产建议指定域名
+        .allow_methods([
+            Method::GET,
+            Method::POST,
+            Method::PUT,
+            Method::PATCH,
+            Method::DELETE,
+            Method::OPTIONS,
+        ])
+        .allow_headers([
+            HeaderName::from_static("content-type"),
+            HeaderName::from_static("authorization"),
+            HeaderName::from_static("x-requested-with"),
+        ])
+        .allow_credentials(true); // 允许凭证 (cookies等)。但若开了，不再允许用 `allow_origin(Any)`
     let app = Router::new()
         .route("/", get(api::test::root))
         .merge(api::heartbeat::factory_utils_router())
