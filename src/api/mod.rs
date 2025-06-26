@@ -7,3 +7,4 @@ pub mod test;
 pub mod heartbeat;
 pub mod todos;
 pub mod rest;
+pub mod node;

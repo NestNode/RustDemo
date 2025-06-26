@@ -47,7 +47,7 @@ struct RestRequest {
 
 /// 创建 RESTful API 路由
 pub async fn factory_rest_router() -> Router {
-    let db = Db::default();
+    let db = Db::default(); // 键值存储
 
     // axum
     let app = Router::new()
@@ -66,7 +66,7 @@ pub async fn factory_rest_router() -> Router {
  */
 async fn rest_id_get(
     id: Option<Path<String>>,
-    pagination: Query<RestGetPagination>,
+    pagination: Query<GetPagination>,
     State(db): State<Db>
 ) -> impl IntoResponse {
     match id {
@@ -98,7 +98,7 @@ async fn rest_id_get(
     }
 }
 #[derive(Debug, Deserialize, Default)]
-struct RestGetPagination {
+struct GetPagination {
     /// 起始位置
     offset: Option<usize>,
     /// 数量限制

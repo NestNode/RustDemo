@@ -65,7 +65,7 @@ pub async fn factory_todos_router() -> Router {
  */
 async fn todos_id_get(
     id: Option<Path<String>>,
-    pagination: Query<TodosGetPagination>, 
+    pagination: Query<GetPagination>, 
     State(db): State<Db>
 ) -> impl IntoResponse {
     match id {
@@ -97,7 +97,7 @@ async fn todos_id_get(
     }
 }
 #[derive(Debug, Deserialize, Default)]
-struct TodosGetPagination {
+struct GetPagination {
     /// 起始位置
     offset: Option<usize>,
     /// 数量限制
