@@ -39,7 +39,7 @@ struct Todo {
 type Db = Arc<RwLock<HashMap<String, Todo>>>;
 
 #[derive(Debug, Deserialize)]
-struct TodosRequest {
+struct RequestType {
     text: Option<String>,
     completed: Option<bool>,
 }
@@ -114,7 +114,7 @@ struct GetPagination {
 async fn todos_id_put(
     id: Option<Path<String>>,
     State(db): State<Db>,
-    Json(input): Json<TodosRequest>
+    Json(input): Json<RequestType>
 ) -> impl IntoResponse {
     let id = id.map(|p| p.0).unwrap_or_else(|| Uuid::new_v4().to_string());
     tracing::debug!("PUT /todos/{}", id);
@@ -139,7 +139,7 @@ async fn todos_id_put(
 async fn todos_id_post(
     id: Option<Path<String>>,
     State(db): State<Db>,
-    Json(input): Json<TodosRequest>
+    Json(input): Json<RequestType>
 ) -> impl IntoResponse {
     let id = id.map(|p| p.0).unwrap_or_else(|| Uuid::new_v4().to_string());
     tracing::debug!("POST /todo/{}", id);
@@ -177,7 +177,7 @@ async fn todos_id_post(
 async fn todos_id_patch(
     Path(id): Path<String>,
     State(db): State<Db>,
-    Json(input): Json<TodosRequest>
+    Json(input): Json<RequestType>
 ) -> Result<impl IntoResponse, StatusCode> {
     tracing::debug!("PATCH /todos/{}", id);
 

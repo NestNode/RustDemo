@@ -41,7 +41,7 @@ struct Rest {
 type Db = Arc<RwLock<HashMap<String, Rest>>>;
 
 #[derive(Debug, Deserialize)]
-struct RestRequest {
+struct RequestType {
     data: Option<Value>,
 }
 
@@ -115,7 +115,7 @@ struct GetPagination {
 async fn rest_id_put(
     id: Option<Path<String>>,
     State(db): State<Db>,
-    Json(input): Json<RestRequest>
+    Json(input): Json<RequestType>
 ) -> impl IntoResponse {
     let id = id.map(|p| p.0).unwrap_or_else(|| Uuid::new_v4().to_string());
     tracing::debug!("PUT /rest/{}", id);
@@ -139,7 +139,7 @@ async fn rest_id_put(
 async fn rest_id_post(
     id: Option<Path<String>>,
     State(db): State<Db>,
-    Json(input): Json<RestRequest>
+    Json(input): Json<RequestType>
 ) -> impl IntoResponse {
     let id = id.map(|p| p.0).unwrap_or_else(|| Uuid::new_v4().to_string());
     tracing::debug!("POST /rest/{}", id);
@@ -176,7 +176,7 @@ async fn rest_id_post(
 async fn rest_patch(
     Path(id): Path<String>,
     State(db): State<Db>,
-    Json(input): Json<RestRequest>
+    Json(input): Json<RequestType>
 ) -> Result<impl IntoResponse, StatusCode> {
     tracing::debug!("PATCH /rest/{}", id);
 

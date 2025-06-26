@@ -30,8 +30,10 @@ use uuid::Uuid;                         // 生成唯一ID
 // use tower::{BoxError, ServiceBuilder}; // 中间件构建工具
 // use tower_http::trace::TraceLayer;   // HTTP请求追踪
 
-// Node特征
-pub trait Node {
+/// Node特征
+/// 
+/// 必须实现线程安全约束
+pub trait Node: Send + Sync {
     fn id(&self) -> &str;
     fn next_id(&self) -> Option<&str>;
     fn prev_id(&self) -> Option<&str>;
@@ -58,7 +60,13 @@ impl Node for BasicNode {
 
 // ------------------
 
-type Db = Vec<Box<dyn Node>>;
+/// 节点数据存储。`动态数组<原子计数<动态分发的trait对象，并明确该对象自身线程安全>>`
+type Db = Vec<Arc<dyn Node + Send + Sync>>;
+
+#[derive(Debug, Deserialize)]
+struct RequestType {
+    data: Option<Value>,
+}
 
 /// 创建 Node API 路由
 pub async fn factory_node_router() -> Router {
@@ -115,7 +123,7 @@ struct GetPagination {
 async fn node_id_put(
     id: Option<Path<String>>,
     State(db): State<Db>,
-    Json(input): Json<RestRequest>
+    Json(input): Json<RequestType>
 ) -> impl IntoResponse {
     let id = id.map(|p| p.0).unwrap_or_else(|| Uuid::new_v4().to_string());
     tracing::debug!("PUT /rest/{}", id);
@@ -135,7 +143,7 @@ async fn node_id_put(
 async fn node_id_post(
     id: Option<Path<String>>,
     State(db): State<Db>,
-    Json(input): Json<RestRequest>
+    Json(input): Json<RequestType>
 ) -> impl IntoResponse {
     let id = id.map(|p| p.0).unwrap_or_else(|| Uuid::new_v4().to_string());
     tracing::debug!("POST /node/{}", id);
@@ -153,7 +161,7 @@ async fn node_id_post(
 async fn node_patch(
     Path(id): Path<String>,
     State(db): State<Db>,
-    Json(input): Json<RestRequest>
+    Json(input): Json<RequestType>
 ) -> impl IntoResponse {
     tracing::debug!("PATCH /node/{}", id);
 
