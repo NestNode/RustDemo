@@ -6,6 +6,8 @@
 
 API 基本遵循 RESTful 设计
 
+这里只有大概，具体见该文件夹路径下的 `api.md` / `api.apifox.json` (该文件由apifox导出，后者可通过导入apifox使用)
+
 ## REST
 
 允许创建键值对的存储内容

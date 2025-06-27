@@ -1,4 +1,4 @@
 # README
 
-- [./README.dev.md](./README.dev.md)
-- [./README.api.md](./README.api.md)
+- [README.dev.md](./docs/README.dev.md)
+- [README.api.md](./docs/README.api.md)

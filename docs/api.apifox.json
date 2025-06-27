@@ -1,0 +1,2675 @@
+{
+  "apifoxProject": "1.0.0",
+  "$schema": {
+    "app": "apifox",
+    "type": "project",
+    "version": "1.2.0"
+  },
+  "info": {
+    "name": "RustDemo",
+    "description": "",
+    "mockRule": {
+      "rules": [],
+      "enableSystemRule": true
+    }
+  },
+  "apiCollection": [
+    {
+      "name": "根目录",
+      "id": 58816350,
+      "auth": {},
+      "securityScheme": {},
+      "parentId": 0,
+      "serverId": "",
+      "description": "",
+      "identityPattern": {
+        "httpApi": {
+          "type": "methodAndPath",
+          "bodyType": "",
+          "fields": []
+        }
+      },
+      "shareSettings": {},
+      "visibility": "SHARED",
+      "moduleId": 5598660,
+      "preProcessors": [
+        {
+          "id": "inheritProcessors",
+          "type": "inheritProcessors",
+          "data": {}
+        }
+      ],
+      "postProcessors": [
+        {
+          "id": "inheritProcessors",
+          "type": "inheritProcessors",
+          "data": {}
+        }
+      ],
+      "inheritPostProcessors": {},
+      "inheritPreProcessors": {},
+      "items": [
+        {
+          "name": "todos",
+          "id": 58817580,
+          "auth": {},
+          "securityScheme": {},
+          "parentId": 0,
+          "serverId": "",
+          "description": "",
+          "identityPattern": {
+            "httpApi": {
+              "type": "inherit",
+              "bodyType": "",
+              "fields": []
+            }
+          },
+          "shareSettings": {},
+          "visibility": "INHERITED",
+          "moduleId": 5598660,
+          "preProcessors": [
+            {
+              "id": "inheritProcessors",
+              "type": "inheritProcessors",
+              "data": {}
+            }
+          ],
+          "postProcessors": [
+            {
+              "id": "inheritProcessors",
+              "type": "inheritProcessors",
+              "data": {}
+            }
+          ],
+          "inheritPostProcessors": {},
+          "inheritPreProcessors": {},
+          "items": [
+            {
+              "name": "get 查-全",
+              "api": {
+                "id": "307455169",
+                "method": "get",
+                "path": "/todos",
+                "parameters": {},
+                "auth": {},
+                "securityScheme": {},
+                "commonParameters": {
+                  "query": [],
+                  "body": [],
+                  "cookie": [],
+                  "header": []
+                },
+                "responses": [
+                  {
+                    "id": "695461248",
+                    "code": 200,
+                    "name": "成功",
+                    "headers": [],
+                    "jsonSchema": {
+                      "type": "array",
+                      "items": {
+                        "type": [
+                          "string",
+                          "integer",
+                          "boolean",
+                          "array",
+                          "object",
+                          "number",
+                          "null"
+                        ]
+                      }
+                    },
+                    "description": "",
+                    "contentType": "json",
+                    "mediaType": "",
+                    "oasExtensions": ""
+                  }
+                ],
+                "responseExamples": [],
+                "requestBody": {
+                  "type": "none",
+                  "parameters": [],
+                  "mediaType": "",
+                  "examples": [],
+                  "oasExtensions": ""
+                },
+                "description": "返回所有待办事项的JSON列表",
+                "tags": [],
+                "status": "developing",
+                "serverId": "",
+                "operationId": "",
+                "sourceUrl": "",
+                "ordering": 10,
+                "cases": [
+                  {
+                    "id": 270610737,
+                    "type": "http",
+                    "path": null,
+                    "name": "成功",
+                    "responseId": 695461248,
+                    "parameters": {
+                      "query": [],
+                      "path": [],
+                      "cookie": [],
+                      "header": []
+                    },
+                    "commonParameters": {
+                      "query": [],
+                      "body": [],
+                      "header": [],
+                      "cookie": []
+                    },
+                    "requestBody": {
+                      "parameters": [],
+                      "generateMode": "normal"
+                    },
+                    "auth": {},
+                    "securityScheme": {},
+                    "advancedSettings": {
+                      "disabledSystemHeaders": {}
+                    },
+                    "requestResult": "{\"id\":\"temp.a11482e0-bdad-455e-8c73-348353787209\",\"cursor\":{\"position\":0,\"iteration\":0,\"length\":1,\"cycles\":1,\"empty\":false,\"eof\":false,\"bof\":true,\"cr\":false,\"ref\":\"a11482e0-bdad-455e-8c73-348353787209\",\"requestIndex\":0,\"httpRequestId\":\"37d7f457-7a15-4dd6-aebc-91be7de945a4\"},\"type\":\"http\",\"response\":{\"id\":\"30d28a0e-3e95-4dc7-92bd-5f6ac6b81469\",\"status\":\"OK\",\"code\":200,\"header\":[{\"key\":\"content-type\",\"value\":\"application/json\"},{\"key\":\"content-length\",\"value\":\"206\"},{\"key\":\"date\",\"value\":\"Wed, 11 Jun 2025 12:39:42 GMT\"}],\"trailer\":[],\"stream\":{\"type\":\"Buffer\",\"data\":[91,123,34,105,100,34,58,34,56,99,56,53,99,54,100,101,45,98,102,102,48,45,52,100,98,51,45,97,48,54,101,45,102,48,54,50,101,52,100,99,99,54,51,102,34,44,34,116,101,120,116,34,58,34,228,189,156,229,176,143,228,187,182,229,191,171,229,190,151,233,151,174,233,151,168,228,184,156,229,137,141,227,128,130,34,44,34,99,111,109,112,108,101,116,101,100,34,58,102,97,108,115,101,125,44,123,34,105,100,34,58,34,52,50,102,52,57,101,98,54,45,53,48,100,53,45,52,98,52,101,45,98,98,99,55,45,51,57,52,99,102,57,52,98,55,57,101,100,34,44,34,116,101,120,116,34,58,34,229,177,128,231,166,187,228,184,142,231,171,139,231,129,171,229,173,152,229,183,165,229,142,159,227,128,130,34,44,34,99,111,109,112,108,101,116,101,100,34,58,102,97,108,115,101,125,93]},\"cookie\":[],\"responseTime\":2,\"responseSize\":206,\"type\":\"http\",\"tempFilePath\":\"\",\"timingPhases\":{\"prepare\":0.4182000160217285,\"wait\":0.19690001010894775,\"dns\":0,\"tcp\":0,\"firstByte\":0.8034000396728516,\"download\":0.29889988899230957,\"process\":0.0196000337600708,\"total\":1.7369999885559082}},\"request\":{\"url\":{\"protocol\":\"http\",\"port\":\"24042\",\"path\":[\"todos\"],\"host\":[\"127\",\"0\",\"0\",\"1\"],\"query\":[],\"variable\":[]},\"header\":[{\"key\":\"User-Agent\",\"value\":\"Apifox/1.0.0 (https://apifox.com)\"},{\"key\":\"Accept\",\"value\":\"*/*\",\"system\":true},{\"key\":\"Host\",\"value\":\"127.0.0.1:24042\",\"system\":true},{\"key\":\"Accept-Encoding\",\"value\":\"gzip, deflate, br\",\"system\":true},{\"key\":\"Connection\",\"value\":\"keep-alive\",\"system\":true}],\"method\":\"GET\",\"baseUrl\":\"127.0.0.1:24042\",\"body\":{},\"type\":\"http\"},\"history\":{\"execution\":{\"verbose\":false,\"sessions\":{},\"data\":[{\"request\":{\"method\":\"GET\",\"href\":\"http://127.0.0.1:24042/todos\",\"headers\":[{\"key\":\"User-Agent\",\"value\":\"Apifox/1.0.0 (https://apifox.com)\"},{\"key\":\"Accept\",\"value\":\"*/*\"},{\"key\":\"Host\",\"value\":\"127.0.0.1:24042\"},{\"key\":\"Accept-Encoding\",\"value\":\"gzip, deflate, br\"},{\"key\":\"Connection\",\"value\":\"keep-alive\"}],\"httpVersion\":\"1.1\"},\"response\":{\"statusCode\":200,\"headers\":[{\"key\":\"content-type\",\"value\":\"application/json\"},{\"key\":\"content-length\",\"value\":\"206\"},{\"key\":\"date\",\"value\":\"Wed, 11 Jun 2025 12:39:42 GMT\"}],\"httpVersion\":\"1.1\"},\"timings\":{\"start\":1749645582749,\"requestStart\":1749645582749,\"offset\":{\"request\":0.4182000160217285,\"socket\":0.6151000261306763,\"response\":1.4185000658035278,\"end\":1.7173999547958374,\"lookup\":0.6151000261306763,\"connect\":0.6151000261306763,\"done\":1.7369999885559082}}}]}},\"responseValidation\":{\"schema\":{\"valid\":true,\"message\":\"\",\"errors\":null},\"responseCode\":{\"valid\":true}},\"passed\":true,\"timings\":{\"started\":1749645582687,\"preProcessorsStarted\":1749645582702,\"preProcessorsCompleted\":1749645582702,\"postProcessorsStarted\":1749645582764,\"postProcessorsCompleted\":1749645582764,\"completed\":1749645582765},\"metaInfo\":{\"httpApiId\":307455169,\"httpApiCaseId\":0,\"httpApiName\":\"get 查\",\"httpApiPath\":\"/todos\",\"httpApiMethod\":\"get\",\"httpApiCaseName\":\"\"}}",
+                    "visibility": "INHERITED",
+                    "moduleId": 5598660,
+                    "preProcessors": [],
+                    "postProcessors": [],
+                    "inheritPostProcessors": {},
+                    "inheritPreProcessors": {}
+                  }
+                ],
+                "mocks": [],
+                "customApiFields": "{}",
+                "advancedSettings": {
+                  "disabledSystemHeaders": {}
+                },
+                "mockScript": {},
+                "codeSamples": [],
+                "commonResponseStatus": {},
+                "responseChildren": [
+                  "BLANK.695461248"
+                ],
+                "visibility": "INHERITED",
+                "moduleId": 5598660,
+                "oasExtensions": "",
+                "preProcessors": [],
+                "postProcessors": [],
+                "inheritPostProcessors": {},
+                "inheritPreProcessors": {}
+              }
+            },
+            {
+              "name": "post 增",
+              "api": {
+                "id": "307455252",
+                "method": "post",
+                "path": "/todos/{id}",
+                "parameters": {
+                  "path": [
+                    {
+                      "id": "id#0",
+                      "name": "id",
+                      "required": true,
+                      "description": "",
+                      "type": "string",
+                      "enable": true
+                    }
+                  ]
+                },
+                "auth": {},
+                "securityScheme": {},
+                "commonParameters": {
+                  "query": [],
+                  "body": [],
+                  "cookie": [],
+                  "header": []
+                },
+                "responses": [
+                  {
+                    "id": "695466691",
+                    "code": 201,
+                    "name": "成功",
+                    "headers": [],
+                    "jsonSchema": {
+                      "type": "object",
+                      "properties": {}
+                    },
+                    "description": "",
+                    "contentType": "json",
+                    "mediaType": "",
+                    "oasExtensions": ""
+                  }
+                ],
+                "responseExamples": [],
+                "requestBody": {
+                  "type": "application/json",
+                  "parameters": [],
+                  "jsonSchema": {
+                    "type": "object",
+                    "properties": {
+                      "text": {
+                        "type": "string",
+                        "title": "待办事项",
+                        "x-apifox-mock": "{{$lorem.sentence(min=3,max=10)}}"
+                      }
+                    },
+                    "x-apifox-orders": [
+                      "text"
+                    ],
+                    "required": [
+                      "text"
+                    ]
+                  },
+                  "mediaType": "",
+                  "examples": [],
+                  "oasExtensions": ""
+                },
+                "description": "创建新的待办事项",
+                "tags": [],
+                "status": "developing",
+                "serverId": "",
+                "operationId": "",
+                "sourceUrl": "",
+                "ordering": 20,
+                "cases": [
+                  {
+                    "id": 270607141,
+                    "type": "http",
+                    "path": null,
+                    "name": "成功",
+                    "responseId": 695466691,
+                    "parameters": {
+                      "query": [],
+                      "path": [
+                        {
+                          "id": "id#0",
+                          "name": "id",
+                          "relatedId": "id#0",
+                          "enable": true,
+                          "isDelete": false,
+                          "value": "{{uuid}}",
+                          "relatedName": "id"
+                        }
+                      ],
+                      "cookie": [],
+                      "header": []
+                    },
+                    "commonParameters": {
+                      "query": [],
+                      "body": [],
+                      "header": [],
+                      "cookie": []
+                    },
+                    "requestBody": {
+                      "parameters": [],
+                      "data": "{\n    \"text\": \"{{$lorem.sentence(min=3,max=10)}}\"\n}",
+                      "generateMode": "normal"
+                    },
+                    "auth": {},
+                    "securityScheme": {},
+                    "advancedSettings": {
+                      "disabledSystemHeaders": {}
+                    },
+                    "requestResult": "{\"id\":\"temp.437d46ae-6ae2-4d95-b577-552e2e1b6a13\",\"cursor\":{\"position\":0,\"iteration\":0,\"length\":1,\"cycles\":1,\"empty\":false,\"eof\":false,\"bof\":true,\"cr\":false,\"ref\":\"437d46ae-6ae2-4d95-b577-552e2e1b6a13\",\"requestIndex\":0,\"httpRequestId\":\"061bc5b6-9408-45e4-83bb-67d29e5b2313\"},\"type\":\"http\",\"response\":{\"id\":\"b25d9760-1cb0-4d1f-b46e-47a811eed8c8\",\"status\":\"Created\",\"code\":201,\"header\":[{\"key\":\"content-type\",\"value\":\"application/json\"},{\"key\":\"content-length\",\"value\":\"97\"},{\"key\":\"date\",\"value\":\"Wed, 11 Jun 2025 12:40:12 GMT\"}],\"trailer\":[],\"stream\":{\"type\":\"Buffer\",\"data\":[123,34,105,100,34,58,34,102,99,99,97,50,101,101,97,45,57,99,50,53,45,52,100,51,99,45,56,100,102,99,45,101,50,100,100,99,52,101,99,101,98,48,50,34,44,34,116,101,120,116,34,58,34,229,177,149,229,174,185,228,184,147,230,157,131,229,174,182,233,135,135,229,174,182,227,128,130,34,44,34,99,111,109,112,108,101,116,101,100,34,58,102,97,108,115,101,125]},\"cookie\":[],\"responseTime\":2,\"responseSize\":97,\"type\":\"http\",\"tempFilePath\":\"\"},\"request\":{\"url\":{\"protocol\":\"http\",\"port\":\"24042\",\"path\":[\"todos\"],\"host\":[\"127\",\"0\",\"0\",\"1\"],\"query\":[],\"variable\":[]},\"header\":[{\"key\":\"User-Agent\",\"value\":\"Apifox/1.0.0 (https://apifox.com)\"},{\"key\":\"Content-Type\",\"value\":\"application/json\"},{\"key\":\"Accept\",\"value\":\"*/*\",\"system\":true},{\"key\":\"Host\",\"value\":\"127.0.0.1:24042\",\"system\":true},{\"key\":\"Accept-Encoding\",\"value\":\"gzip, deflate, br\",\"system\":true},{\"key\":\"Connection\",\"value\":\"keep-alive\",\"system\":true},{\"key\":\"Content-Length\",\"value\":42,\"system\":true}],\"method\":\"POST\",\"baseUrl\":\"127.0.0.1:24042\",\"body\":{\"mode\":\"raw\",\"raw\":\"{\\n    \\\"text\\\": \\\"展容专权家采家。\\\"\\n}\",\"generateMode\":\"auto\",\"type\":\"application/json\"},\"type\":\"http\"},\"history\":{\"execution\":{\"verbose\":false,\"sessions\":{},\"data\":[{\"request\":{\"method\":\"POST\",\"href\":\"http://127.0.0.1:24042/todos\",\"headers\":[{\"key\":\"User-Agent\",\"value\":\"Apifox/1.0.0 (https://apifox.com)\"},{\"key\":\"Content-Type\",\"value\":\"application/json\"},{\"key\":\"Accept\",\"value\":\"*/*\"},{\"key\":\"Host\",\"value\":\"127.0.0.1:24042\"},{\"key\":\"Accept-Encoding\",\"value\":\"gzip, deflate, br\"},{\"key\":\"Connection\",\"value\":\"keep-alive\"},{\"key\":\"Content-Length\",\"value\":\"42\"}],\"httpVersion\":\"1.1\"},\"response\":{\"statusCode\":201,\"headers\":[{\"key\":\"content-type\",\"value\":\"application/json\"},{\"key\":\"content-length\",\"value\":\"97\"},{\"key\":\"date\",\"value\":\"Wed, 11 Jun 2025 12:40:12 GMT\"}],\"httpVersion\":\"1.1\"},\"timings\":{\"start\":1749645612343,\"requestStart\":1749645612343,\"offset\":{\"request\":0.39770007133483887,\"socket\":0.5946999788284302,\"response\":1.415000081062317,\"end\":1.6779999732971191,\"lookup\":0.5946999788284302,\"connect\":0.5946999788284302,\"done\":1.6959000825881958}}}]}},\"responseValidation\":{\"schema\":{\"valid\":true,\"message\":\"\",\"errors\":null},\"responseCode\":{\"valid\":false,\"result\":{\"actual\":201,\"expect\":200},\"message\":\"应当是 200 实际却是 201\"}},\"passed\":false,\"timings\":{\"started\":1749645612280,\"preProcessorsStarted\":1749645612296,\"preProcessorsCompleted\":1749645612296,\"postProcessorsStarted\":1749645612358,\"postProcessorsCompleted\":1749645612358,\"completed\":1749645612359},\"metaInfo\":{\"httpApiId\":307455252,\"httpApiCaseId\":270607141,\"httpApiName\":\"post 增\",\"httpApiPath\":\"/todos\",\"httpApiMethod\":\"post\",\"httpApiCaseName\":\"成功\"}}",
+                    "visibility": "INHERITED",
+                    "moduleId": 5598660,
+                    "preProcessors": [],
+                    "postProcessors": [],
+                    "inheritPostProcessors": {},
+                    "inheritPreProcessors": {}
+                  }
+                ],
+                "mocks": [],
+                "customApiFields": "{}",
+                "advancedSettings": {
+                  "disabledSystemHeaders": {}
+                },
+                "mockScript": {},
+                "codeSamples": [],
+                "commonResponseStatus": {},
+                "responseChildren": [
+                  "BLANK.695466691"
+                ],
+                "visibility": "INHERITED",
+                "moduleId": 5598660,
+                "oasExtensions": "",
+                "preProcessors": [],
+                "postProcessors": [],
+                "inheritPostProcessors": {},
+                "inheritPreProcessors": {}
+              }
+            },
+            {
+              "name": "post 增-随机",
+              "api": {
+                "id": "308052669",
+                "method": "post",
+                "path": "/todos",
+                "parameters": {},
+                "auth": {},
+                "securityScheme": {},
+                "commonParameters": {
+                  "query": [],
+                  "body": [],
+                  "cookie": [],
+                  "header": []
+                },
+                "responses": [
+                  {
+                    "id": "696522485",
+                    "code": 201,
+                    "name": "成功",
+                    "headers": [],
+                    "jsonSchema": {
+                      "type": "object",
+                      "properties": {}
+                    },
+                    "description": "",
+                    "contentType": "json",
+                    "mediaType": "",
+                    "oasExtensions": ""
+                  }
+                ],
+                "responseExamples": [],
+                "requestBody": {
+                  "type": "application/json",
+                  "parameters": [],
+                  "jsonSchema": {
+                    "type": "object",
+                    "properties": {
+                      "text": {
+                        "type": "string",
+                        "title": "待办事项",
+                        "x-apifox-mock": "{{$lorem.sentence(min=3,max=10)}}"
+                      }
+                    },
+                    "x-apifox-orders": [
+                      "text"
+                    ],
+                    "required": [
+                      "text"
+                    ]
+                  },
+                  "mediaType": "",
+                  "examples": [],
+                  "oasExtensions": ""
+                },
+                "description": "创建新的待办事项",
+                "tags": [],
+                "status": "developing",
+                "serverId": "",
+                "operationId": "",
+                "sourceUrl": "",
+                "ordering": 25,
+                "cases": [
+                  {
+                    "id": 270943104,
+                    "type": "http",
+                    "path": null,
+                    "name": "成功",
+                    "responseId": 696522485,
+                    "parameters": {
+                      "query": [],
+                      "path": [],
+                      "cookie": [],
+                      "header": []
+                    },
+                    "commonParameters": {
+                      "query": [],
+                      "body": [],
+                      "header": [],
+                      "cookie": []
+                    },
+                    "requestBody": {
+                      "parameters": [],
+                      "data": "{\n    \"text\": \"{{$lorem.sentence(min=3,max=10)}}\"\n}",
+                      "generateMode": "normal"
+                    },
+                    "auth": {},
+                    "securityScheme": {},
+                    "advancedSettings": {
+                      "disabledSystemHeaders": {}
+                    },
+                    "requestResult": "{\"id\":\"temp.437d46ae-6ae2-4d95-b577-552e2e1b6a13\",\"cursor\":{\"position\":0,\"iteration\":0,\"length\":1,\"cycles\":1,\"empty\":false,\"eof\":false,\"bof\":true,\"cr\":false,\"ref\":\"437d46ae-6ae2-4d95-b577-552e2e1b6a13\",\"requestIndex\":0,\"httpRequestId\":\"061bc5b6-9408-45e4-83bb-67d29e5b2313\"},\"type\":\"http\",\"response\":{\"id\":\"b25d9760-1cb0-4d1f-b46e-47a811eed8c8\",\"status\":\"Created\",\"code\":201,\"header\":[{\"key\":\"content-type\",\"value\":\"application/json\"},{\"key\":\"content-length\",\"value\":\"97\"},{\"key\":\"date\",\"value\":\"Wed, 11 Jun 2025 12:40:12 GMT\"}],\"trailer\":[],\"stream\":{\"type\":\"Buffer\",\"data\":[123,34,105,100,34,58,34,102,99,99,97,50,101,101,97,45,57,99,50,53,45,52,100,51,99,45,56,100,102,99,45,101,50,100,100,99,52,101,99,101,98,48,50,34,44,34,116,101,120,116,34,58,34,229,177,149,229,174,185,228,184,147,230,157,131,229,174,182,233,135,135,229,174,182,227,128,130,34,44,34,99,111,109,112,108,101,116,101,100,34,58,102,97,108,115,101,125]},\"cookie\":[],\"responseTime\":2,\"responseSize\":97,\"type\":\"http\",\"tempFilePath\":\"\",\"timingPhases\":{\"prepare\":0.39770007133483887,\"wait\":0.1969999074935913,\"dns\":0,\"tcp\":0,\"firstByte\":0.8203001022338867,\"download\":0.26299989223480225,\"process\":0.01790010929107666,\"total\":1.6959000825881958}},\"request\":{\"url\":{\"protocol\":\"http\",\"port\":\"24042\",\"path\":[\"todos\"],\"host\":[\"127\",\"0\",\"0\",\"1\"],\"query\":[],\"variable\":[]},\"header\":[{\"key\":\"User-Agent\",\"value\":\"Apifox/1.0.0 (https://apifox.com)\"},{\"key\":\"Content-Type\",\"value\":\"application/json\"},{\"key\":\"Accept\",\"value\":\"*/*\",\"system\":true},{\"key\":\"Host\",\"value\":\"127.0.0.1:24042\",\"system\":true},{\"key\":\"Accept-Encoding\",\"value\":\"gzip, deflate, br\",\"system\":true},{\"key\":\"Connection\",\"value\":\"keep-alive\",\"system\":true},{\"key\":\"Content-Length\",\"value\":42,\"system\":true}],\"method\":\"POST\",\"baseUrl\":\"127.0.0.1:24042\",\"body\":{\"mode\":\"raw\",\"raw\":\"{\\n    \\\"text\\\": \\\"展容专权家采家。\\\"\\n}\",\"generateMode\":\"auto\",\"type\":\"application/json\"},\"type\":\"http\"},\"history\":{\"execution\":{\"verbose\":false,\"sessions\":{},\"data\":[{\"request\":{\"method\":\"POST\",\"href\":\"http://127.0.0.1:24042/todos\",\"headers\":[{\"key\":\"User-Agent\",\"value\":\"Apifox/1.0.0 (https://apifox.com)\"},{\"key\":\"Content-Type\",\"value\":\"application/json\"},{\"key\":\"Accept\",\"value\":\"*/*\"},{\"key\":\"Host\",\"value\":\"127.0.0.1:24042\"},{\"key\":\"Accept-Encoding\",\"value\":\"gzip, deflate, br\"},{\"key\":\"Connection\",\"value\":\"keep-alive\"},{\"key\":\"Content-Length\",\"value\":\"42\"}],\"httpVersion\":\"1.1\"},\"response\":{\"statusCode\":201,\"headers\":[{\"key\":\"content-type\",\"value\":\"application/json\"},{\"key\":\"content-length\",\"value\":\"97\"},{\"key\":\"date\",\"value\":\"Wed, 11 Jun 2025 12:40:12 GMT\"}],\"httpVersion\":\"1.1\"},\"timings\":{\"start\":1749645612343,\"requestStart\":1749645612343,\"offset\":{\"request\":0.39770007133483887,\"socket\":0.5946999788284302,\"response\":1.415000081062317,\"end\":1.6779999732971191,\"lookup\":0.5946999788284302,\"connect\":0.5946999788284302,\"done\":1.6959000825881958}}}]}},\"responseValidation\":{\"schema\":{\"valid\":true,\"message\":\"\",\"errors\":null},\"responseCode\":{\"valid\":false,\"result\":{\"actual\":201,\"expect\":200},\"message\":\"应当是 200 实际却是 201\"}},\"passed\":false,\"timings\":{\"started\":1749645612280,\"preProcessorsStarted\":1749645612296,\"preProcessorsCompleted\":1749645612296,\"postProcessorsStarted\":1749645612358,\"postProcessorsCompleted\":1749645612358,\"completed\":1749645612359},\"metaInfo\":{\"httpApiId\":307455252,\"httpApiCaseId\":270607141,\"httpApiName\":\"post 增\",\"httpApiPath\":\"/todos\",\"httpApiMethod\":\"post\",\"httpApiCaseName\":\"成功\"}}",
+                    "visibility": "INHERITED",
+                    "moduleId": 5598660,
+                    "preProcessors": [],
+                    "postProcessors": [],
+                    "inheritPostProcessors": {},
+                    "inheritPreProcessors": {}
+                  }
+                ],
+                "mocks": [],
+                "customApiFields": "{}",
+                "advancedSettings": {
+                  "disabledSystemHeaders": {}
+                },
+                "mockScript": {},
+                "codeSamples": [],
+                "commonResponseStatus": {},
+                "responseChildren": [
+                  "BLANK.696522485"
+                ],
+                "visibility": "INHERITED",
+                "moduleId": 5598660,
+                "oasExtensions": "",
+                "preProcessors": [],
+                "postProcessors": [],
+                "inheritPostProcessors": {},
+                "inheritPreProcessors": {}
+              }
+            },
+            {
+              "name": "patch 改",
+              "api": {
+                "id": "307455608",
+                "method": "patch",
+                "path": "/todos/{id}",
+                "parameters": {
+                  "path": [
+                    {
+                      "id": "id#0",
+                      "name": "id",
+                      "required": true,
+                      "description": "",
+                      "type": "string",
+                      "enable": true
+                    }
+                  ]
+                },
+                "auth": {},
+                "securityScheme": {},
+                "commonParameters": {
+                  "query": [],
+                  "body": [],
+                  "cookie": [],
+                  "header": []
+                },
+                "responses": [
+                  {
+                    "id": "695459053",
+                    "code": 200,
+                    "name": "成功",
+                    "headers": [],
+                    "jsonSchema": {
+                      "type": "object",
+                      "properties": {
+                        "text": {
+                          "type": "string",
+                          "x-apifox-mock": "{{$lorem.sentence(min=3,max=10)}}",
+                          "title": "文本"
+                        },
+                        "completed": {
+                          "type": "boolean",
+                          "x-apifox-mock": "{{$datatype.boolean}}",
+                          "title": "是否已完成"
+                        }
+                      },
+                      "x-apifox-orders": [
+                        "text",
+                        "completed"
+                      ]
+                    },
+                    "description": "",
+                    "contentType": "json",
+                    "mediaType": "",
+                    "oasExtensions": ""
+                  }
+                ],
+                "responseExamples": [],
+                "requestBody": {
+                  "type": "none",
+                  "parameters": [],
+                  "mediaType": "",
+                  "examples": [],
+                  "oasExtensions": ""
+                },
+                "description": "更新指定ID的待办事项",
+                "tags": [],
+                "status": "developing",
+                "serverId": "",
+                "operationId": "",
+                "sourceUrl": "",
+                "ordering": 40,
+                "cases": [
+                  {
+                    "id": 270608684,
+                    "type": "http",
+                    "path": null,
+                    "name": "成功",
+                    "responseId": 695459053,
+                    "parameters": {
+                      "query": [],
+                      "path": [
+                        {
+                          "id": "id#0",
+                          "name": "id",
+                          "relatedId": "id#0",
+                          "enable": true,
+                          "isDelete": false,
+                          "value": "{{uuid}}",
+                          "relatedName": "id"
+                        }
+                      ],
+                      "cookie": [],
+                      "header": []
+                    },
+                    "commonParameters": {
+                      "query": [],
+                      "body": [],
+                      "header": [],
+                      "cookie": []
+                    },
+                    "requestBody": {
+                      "parameters": [],
+                      "type": "application/json",
+                      "data": "{\r\n    \"text\": \"{{$lorem.sentence(min=3,max=10)}}\",\r\n    \"completed\": {{$datatype.boolean}}\r\n}",
+                      "generateMode": "normal"
+                    },
+                    "auth": {},
+                    "securityScheme": {},
+                    "advancedSettings": {
+                      "disabledSystemHeaders": {}
+                    },
+                    "requestResult": "{\"id\":\"temp.9f9a49ee-2200-4748-8323-df38d39b0312\",\"cursor\":{\"position\":0,\"iteration\":0,\"length\":1,\"cycles\":1,\"empty\":false,\"eof\":false,\"bof\":true,\"cr\":false,\"ref\":\"9f9a49ee-2200-4748-8323-df38d39b0312\",\"requestIndex\":0,\"httpRequestId\":\"29f4f32d-1b09-4d9f-9ead-0fcaac7b998b\"},\"type\":\"http\",\"response\":{\"id\":\"11386557-5b3a-4500-9df2-bd8c0f5095d4\",\"status\":\"OK\",\"code\":200,\"header\":[{\"key\":\"content-type\",\"value\":\"application/json\"},{\"key\":\"content-length\",\"value\":\"100\"},{\"key\":\"date\",\"value\":\"Wed, 11 Jun 2025 12:47:40 GMT\"}],\"trailer\":[],\"stream\":{\"type\":\"Buffer\",\"data\":[123,34,105,100,34,58,34,102,99,99,97,50,101,101,97,45,57,99,50,53,45,52,100,51,99,45,56,100,102,99,45,101,50,100,100,99,52,101,99,101,98,48,50,34,44,34,116,101,120,116,34,58,34,231,160,148,229,173,144,230,149,153,231,155,180,229,189,177,228,186,178,228,184,186,228,184,147,227,128,130,34,44,34,99,111,109,112,108,101,116,101,100,34,58,102,97,108,115,101,125]},\"cookie\":[],\"responseTime\":2,\"responseSize\":100,\"type\":\"http\",\"tempFilePath\":\"\"},\"request\":{\"url\":{\"protocol\":\"http\",\"port\":\"24042\",\"path\":[\"todos\",\"fcca2eea-9c25-4d3c-8dfc-e2ddc4eceb02\"],\"host\":[\"127\",\"0\",\"0\",\"1\"],\"query\":[],\"variable\":[]},\"header\":[{\"key\":\"User-Agent\",\"value\":\"Apifox/1.0.0 (https://apifox.com)\"},{\"key\":\"Content-Type\",\"value\":\"application/json\"},{\"key\":\"Accept\",\"value\":\"*/*\",\"system\":true},{\"key\":\"Host\",\"value\":\"127.0.0.1:24042\",\"system\":true},{\"key\":\"Accept-Encoding\",\"value\":\"gzip, deflate, br\",\"system\":true},{\"key\":\"Connection\",\"value\":\"keep-alive\",\"system\":true},{\"key\":\"Content-Length\",\"value\":72,\"system\":true}],\"method\":\"PATCH\",\"baseUrl\":\"127.0.0.1:24042\",\"body\":{\"mode\":\"raw\",\"raw\":\"{\\r\\n    \\\"text\\\": \\\"研子教直影亲为专。\\\",\\r\\n    \\\"completed\\\": false\\r\\n}\",\"generateMode\":\"normal\",\"type\":\"application/json\"},\"type\":\"http\"},\"history\":{\"execution\":{\"verbose\":false,\"sessions\":{},\"data\":[{\"request\":{\"method\":\"PATCH\",\"href\":\"http://127.0.0.1:24042/todos/fcca2eea-9c25-4d3c-8dfc-e2ddc4eceb02\",\"headers\":[{\"key\":\"User-Agent\",\"value\":\"Apifox/1.0.0 (https://apifox.com)\"},{\"key\":\"Content-Type\",\"value\":\"application/json\"},{\"key\":\"Accept\",\"value\":\"*/*\"},{\"key\":\"Host\",\"value\":\"127.0.0.1:24042\"},{\"key\":\"Accept-Encoding\",\"value\":\"gzip, deflate, br\"},{\"key\":\"Connection\",\"value\":\"keep-alive\"},{\"key\":\"Content-Length\",\"value\":\"72\"}],\"httpVersion\":\"1.1\"},\"response\":{\"statusCode\":200,\"headers\":[{\"key\":\"content-type\",\"value\":\"application/json\"},{\"key\":\"content-length\",\"value\":\"100\"},{\"key\":\"date\",\"value\":\"Wed, 11 Jun 2025 12:47:40 GMT\"}],\"httpVersion\":\"1.1\"},\"timings\":{\"start\":1749646060119,\"requestStart\":1749646060120,\"offset\":{\"request\":0.36730003356933594,\"socket\":0.5313999652862549,\"response\":1.4775999784469604,\"end\":1.8589999675750732,\"lookup\":0.5313999652862549,\"connect\":0.5313999652862549,\"done\":1.8770999908447266}}}]}},\"responseValidation\":{\"schema\":{\"valid\":true,\"message\":\"\",\"errors\":null},\"responseCode\":{\"valid\":true}},\"passed\":true,\"timings\":{\"started\":1749646060059,\"preProcessorsStarted\":1749646060073,\"preProcessorsCompleted\":1749646060073,\"postProcessorsStarted\":1749646060135,\"postProcessorsCompleted\":1749646060135,\"completed\":1749646060136},\"metaInfo\":{\"httpApiId\":307455608,\"httpApiCaseId\":270607663,\"httpApiName\":\"patch 改\",\"httpApiPath\":\"/todos/fcca2eea-9c25-4d3c-8dfc-e2ddc4eceb02\",\"httpApiMethod\":\"patch\",\"httpApiCaseName\":\"\"}}",
+                    "visibility": "INHERITED",
+                    "moduleId": 5598660,
+                    "preProcessors": [],
+                    "postProcessors": [],
+                    "inheritPostProcessors": {},
+                    "inheritPreProcessors": {}
+                  }
+                ],
+                "mocks": [],
+                "customApiFields": "{}",
+                "advancedSettings": {
+                  "disabledSystemHeaders": {}
+                },
+                "mockScript": {},
+                "codeSamples": [],
+                "commonResponseStatus": {},
+                "responseChildren": [
+                  "BLANK.695459053"
+                ],
+                "visibility": "INHERITED",
+                "moduleId": 5598660,
+                "oasExtensions": "",
+                "preProcessors": [],
+                "postProcessors": [],
+                "inheritPostProcessors": {},
+                "inheritPreProcessors": {}
+              }
+            },
+            {
+              "name": "delete 删",
+              "api": {
+                "id": "307455429",
+                "method": "delete",
+                "path": "/todos/{id}",
+                "parameters": {
+                  "path": [
+                    {
+                      "id": "id#0",
+                      "name": "id",
+                      "required": true,
+                      "description": "",
+                      "type": "string",
+                      "enable": true
+                    }
+                  ]
+                },
+                "auth": {},
+                "securityScheme": {},
+                "commonParameters": {
+                  "query": [],
+                  "body": [],
+                  "cookie": [],
+                  "header": []
+                },
+                "responses": [
+                  {
+                    "id": "695461706",
+                    "code": 204,
+                    "name": "删除成功",
+                    "headers": [],
+                    "jsonSchema": {
+                      "type": "object",
+                      "properties": {}
+                    },
+                    "description": "",
+                    "contentType": "noContent",
+                    "mediaType": "",
+                    "oasExtensions": ""
+                  }
+                ],
+                "responseExamples": [],
+                "requestBody": {
+                  "type": "none",
+                  "parameters": [],
+                  "mediaType": "",
+                  "examples": [],
+                  "oasExtensions": ""
+                },
+                "description": "删除指定ID的待办事项",
+                "tags": [],
+                "status": "developing",
+                "serverId": "",
+                "operationId": "",
+                "sourceUrl": "",
+                "ordering": 30,
+                "cases": [
+                  {
+                    "id": 270612090,
+                    "type": "http",
+                    "path": null,
+                    "name": "成功",
+                    "responseId": 695461706,
+                    "parameters": {
+                      "query": [],
+                      "path": [
+                        {
+                          "id": "id#0",
+                          "name": "id",
+                          "relatedId": "id#0",
+                          "value": "{{uuid}}",
+                          "enable": true,
+                          "isDelete": false,
+                          "relatedName": "id"
+                        }
+                      ],
+                      "cookie": [],
+                      "header": []
+                    },
+                    "commonParameters": {
+                      "query": [],
+                      "body": [],
+                      "header": [],
+                      "cookie": []
+                    },
+                    "requestBody": {
+                      "parameters": [],
+                      "generateMode": "normal"
+                    },
+                    "auth": {},
+                    "securityScheme": {},
+                    "advancedSettings": {
+                      "disabledSystemHeaders": {}
+                    },
+                    "requestResult": "{\"id\":\"temp.a316c3cc-1811-4194-ba22-98cc7d221c74\",\"cursor\":{\"position\":0,\"iteration\":0,\"length\":1,\"cycles\":1,\"empty\":false,\"eof\":false,\"bof\":true,\"cr\":false,\"ref\":\"a316c3cc-1811-4194-ba22-98cc7d221c74\",\"requestIndex\":0,\"httpRequestId\":\"057b9e26-e01c-488a-9de3-242fd54387fa\"},\"type\":\"http\",\"response\":{\"id\":\"4c169efa-7b3c-4d55-9ee8-674950566258\",\"status\":\"No Content\",\"code\":204,\"header\":[{\"key\":\"date\",\"value\":\"Wed, 11 Jun 2025 13:11:03 GMT\"}],\"trailer\":[],\"stream\":{\"type\":\"Buffer\",\"data\":[]},\"cookie\":[],\"responseTime\":2,\"responseSize\":0,\"type\":\"http\",\"tempFilePath\":\"\",\"timingPhases\":{\"prepare\":0.6224000453948975,\"wait\":0.18429994583129883,\"dns\":0,\"tcp\":0,\"firstByte\":0.8939000368118286,\"download\":0.3579000234603882,\"process\":0.03620004653930664,\"total\":2.0947000980377197}},\"request\":{\"url\":{\"protocol\":\"http\",\"port\":\"24042\",\"path\":[\"todos\",\"fcca2eea-9c25-4d3c-8dfc-e2ddc4eceb02\"],\"host\":[\"127\",\"0\",\"0\",\"1\"],\"query\":[],\"variable\":[]},\"header\":[{\"key\":\"User-Agent\",\"value\":\"Apifox/1.0.0 (https://apifox.com)\"},{\"key\":\"Accept\",\"value\":\"*/*\",\"system\":true},{\"key\":\"Host\",\"value\":\"127.0.0.1:24042\",\"system\":true},{\"key\":\"Accept-Encoding\",\"value\":\"gzip, deflate, br\",\"system\":true},{\"key\":\"Connection\",\"value\":\"keep-alive\",\"system\":true}],\"method\":\"DELETE\",\"baseUrl\":\"127.0.0.1:24042\",\"body\":{},\"type\":\"http\"},\"history\":{\"execution\":{\"verbose\":false,\"sessions\":{},\"data\":[{\"request\":{\"method\":\"DELETE\",\"href\":\"http://127.0.0.1:24042/todos/fcca2eea-9c25-4d3c-8dfc-e2ddc4eceb02\",\"headers\":[{\"key\":\"User-Agent\",\"value\":\"Apifox/1.0.0 (https://apifox.com)\"},{\"key\":\"Accept\",\"value\":\"*/*\"},{\"key\":\"Host\",\"value\":\"127.0.0.1:24042\"},{\"key\":\"Accept-Encoding\",\"value\":\"gzip, deflate, br\"},{\"key\":\"Connection\",\"value\":\"keep-alive\"}],\"httpVersion\":\"1.1\"},\"response\":{\"statusCode\":204,\"headers\":[{\"key\":\"date\",\"value\":\"Wed, 11 Jun 2025 13:11:03 GMT\"}],\"httpVersion\":\"1.1\"},\"timings\":{\"start\":1749647463114,\"requestStart\":1749647463115,\"offset\":{\"request\":0.6224000453948975,\"socket\":0.8066999912261963,\"response\":1.700600028038025,\"end\":2.058500051498413,\"lookup\":0.8066999912261963,\"connect\":0.8066999912261963,\"done\":2.0947000980377197}}}]}},\"responseValidation\":{\"schema\":{\"valid\":false,\"result\":{\"expect\":\"JSON\",\"actual\":\"Raw\"},\"message\":\"返回的数据格式不是 JSON\"},\"responseCode\":{\"valid\":false,\"result\":{\"actual\":204,\"expect\":200},\"message\":\"应当是 200 实际却是 204\"}},\"passed\":false,\"timings\":{\"started\":1749647463052,\"preProcessorsStarted\":1749647463067,\"preProcessorsCompleted\":1749647463067,\"postProcessorsStarted\":1749647463130,\"postProcessorsCompleted\":1749647463130,\"completed\":1749647463131},\"metaInfo\":{\"httpApiId\":307455429,\"httpApiCaseId\":0,\"httpApiName\":\"delete 删\",\"httpApiPath\":\"/todos/{id}\",\"httpApiMethod\":\"delete\",\"httpApiCaseName\":\"\"}}",
+                    "visibility": "INHERITED",
+                    "moduleId": 5598660,
+                    "preProcessors": [],
+                    "postProcessors": [],
+                    "inheritPostProcessors": {},
+                    "inheritPreProcessors": {}
+                  }
+                ],
+                "mocks": [],
+                "customApiFields": "{}",
+                "advancedSettings": {
+                  "disabledSystemHeaders": {}
+                },
+                "mockScript": {},
+                "codeSamples": [],
+                "commonResponseStatus": {},
+                "responseChildren": [
+                  "BLANK.695461706"
+                ],
+                "visibility": "INHERITED",
+                "moduleId": 5598660,
+                "oasExtensions": "",
+                "preProcessors": [],
+                "postProcessors": [],
+                "inheritPostProcessors": {},
+                "inheritPreProcessors": {}
+              }
+            }
+          ]
+        },
+        {
+          "name": "rest",
+          "id": 58938484,
+          "auth": {},
+          "securityScheme": {},
+          "parentId": 0,
+          "serverId": "",
+          "description": "",
+          "identityPattern": {
+            "httpApi": {
+              "type": "inherit",
+              "bodyType": "",
+              "fields": []
+            }
+          },
+          "shareSettings": {},
+          "visibility": "INHERITED",
+          "moduleId": 5598660,
+          "preProcessors": [
+            {
+              "id": "inheritProcessors",
+              "type": "inheritProcessors",
+              "data": {}
+            }
+          ],
+          "postProcessors": [
+            {
+              "id": "inheritProcessors",
+              "type": "inheritProcessors",
+              "data": {}
+            }
+          ],
+          "inheritPostProcessors": {},
+          "inheritPreProcessors": {},
+          "items": [
+            {
+              "name": "get 查-全",
+              "api": {
+                "id": "308133542",
+                "method": "get",
+                "path": "/rest",
+                "parameters": {},
+                "auth": {},
+                "securityScheme": {},
+                "commonParameters": {
+                  "query": [],
+                  "body": [],
+                  "cookie": [],
+                  "header": []
+                },
+                "responses": [
+                  {
+                    "id": "696632163",
+                    "code": 200,
+                    "name": "成功",
+                    "headers": [],
+                    "jsonSchema": {
+                      "type": "array",
+                      "items": {
+                        "type": [
+                          "string",
+                          "integer",
+                          "boolean",
+                          "array",
+                          "object",
+                          "number",
+                          "null"
+                        ]
+                      }
+                    },
+                    "description": "",
+                    "contentType": "json",
+                    "mediaType": "",
+                    "oasExtensions": ""
+                  }
+                ],
+                "responseExamples": [],
+                "requestBody": {
+                  "type": "none",
+                  "parameters": [],
+                  "mediaType": "",
+                  "examples": [],
+                  "oasExtensions": ""
+                },
+                "description": "返回所有待办事项的JSON列表",
+                "tags": [],
+                "status": "developing",
+                "serverId": "",
+                "operationId": "",
+                "sourceUrl": "",
+                "ordering": 0,
+                "cases": [
+                  {
+                    "id": 270998293,
+                    "type": "http",
+                    "path": null,
+                    "name": "成功",
+                    "responseId": 696632163,
+                    "parameters": {
+                      "query": [],
+                      "path": [],
+                      "cookie": [],
+                      "header": []
+                    },
+                    "commonParameters": {
+                      "query": [],
+                      "body": [],
+                      "header": [],
+                      "cookie": []
+                    },
+                    "requestBody": {
+                      "parameters": [],
+                      "generateMode": "normal"
+                    },
+                    "auth": {},
+                    "securityScheme": {},
+                    "advancedSettings": {
+                      "disabledSystemHeaders": {}
+                    },
+                    "requestResult": "{\"id\":\"temp.a11482e0-bdad-455e-8c73-348353787209\",\"cursor\":{\"position\":0,\"iteration\":0,\"length\":1,\"cycles\":1,\"empty\":false,\"eof\":false,\"bof\":true,\"cr\":false,\"ref\":\"a11482e0-bdad-455e-8c73-348353787209\",\"requestIndex\":0,\"httpRequestId\":\"37d7f457-7a15-4dd6-aebc-91be7de945a4\"},\"type\":\"http\",\"response\":{\"id\":\"30d28a0e-3e95-4dc7-92bd-5f6ac6b81469\",\"status\":\"OK\",\"code\":200,\"header\":[{\"key\":\"content-type\",\"value\":\"application/json\"},{\"key\":\"content-length\",\"value\":\"206\"},{\"key\":\"date\",\"value\":\"Wed, 11 Jun 2025 12:39:42 GMT\"}],\"trailer\":[],\"stream\":{\"type\":\"Buffer\",\"data\":[91,123,34,105,100,34,58,34,56,99,56,53,99,54,100,101,45,98,102,102,48,45,52,100,98,51,45,97,48,54,101,45,102,48,54,50,101,52,100,99,99,54,51,102,34,44,34,116,101,120,116,34,58,34,228,189,156,229,176,143,228,187,182,229,191,171,229,190,151,233,151,174,233,151,168,228,184,156,229,137,141,227,128,130,34,44,34,99,111,109,112,108,101,116,101,100,34,58,102,97,108,115,101,125,44,123,34,105,100,34,58,34,52,50,102,52,57,101,98,54,45,53,48,100,53,45,52,98,52,101,45,98,98,99,55,45,51,57,52,99,102,57,52,98,55,57,101,100,34,44,34,116,101,120,116,34,58,34,229,177,128,231,166,187,228,184,142,231,171,139,231,129,171,229,173,152,229,183,165,229,142,159,227,128,130,34,44,34,99,111,109,112,108,101,116,101,100,34,58,102,97,108,115,101,125,93]},\"cookie\":[],\"responseTime\":2,\"responseSize\":206,\"type\":\"http\",\"tempFilePath\":\"\",\"timingPhases\":{\"prepare\":0.4182000160217285,\"wait\":0.19690001010894775,\"dns\":0,\"tcp\":0,\"firstByte\":0.8034000396728516,\"download\":0.29889988899230957,\"process\":0.0196000337600708,\"total\":1.7369999885559082}},\"request\":{\"url\":{\"protocol\":\"http\",\"port\":\"24042\",\"path\":[\"todos\"],\"host\":[\"127\",\"0\",\"0\",\"1\"],\"query\":[],\"variable\":[]},\"header\":[{\"key\":\"User-Agent\",\"value\":\"Apifox/1.0.0 (https://apifox.com)\"},{\"key\":\"Accept\",\"value\":\"*/*\",\"system\":true},{\"key\":\"Host\",\"value\":\"127.0.0.1:24042\",\"system\":true},{\"key\":\"Accept-Encoding\",\"value\":\"gzip, deflate, br\",\"system\":true},{\"key\":\"Connection\",\"value\":\"keep-alive\",\"system\":true}],\"method\":\"GET\",\"baseUrl\":\"127.0.0.1:24042\",\"body\":{},\"type\":\"http\"},\"history\":{\"execution\":{\"verbose\":false,\"sessions\":{},\"data\":[{\"request\":{\"method\":\"GET\",\"href\":\"http://127.0.0.1:24042/todos\",\"headers\":[{\"key\":\"User-Agent\",\"value\":\"Apifox/1.0.0 (https://apifox.com)\"},{\"key\":\"Accept\",\"value\":\"*/*\"},{\"key\":\"Host\",\"value\":\"127.0.0.1:24042\"},{\"key\":\"Accept-Encoding\",\"value\":\"gzip, deflate, br\"},{\"key\":\"Connection\",\"value\":\"keep-alive\"}],\"httpVersion\":\"1.1\"},\"response\":{\"statusCode\":200,\"headers\":[{\"key\":\"content-type\",\"value\":\"application/json\"},{\"key\":\"content-length\",\"value\":\"206\"},{\"key\":\"date\",\"value\":\"Wed, 11 Jun 2025 12:39:42 GMT\"}],\"httpVersion\":\"1.1\"},\"timings\":{\"start\":1749645582749,\"requestStart\":1749645582749,\"offset\":{\"request\":0.4182000160217285,\"socket\":0.6151000261306763,\"response\":1.4185000658035278,\"end\":1.7173999547958374,\"lookup\":0.6151000261306763,\"connect\":0.6151000261306763,\"done\":1.7369999885559082}}}]}},\"responseValidation\":{\"schema\":{\"valid\":true,\"message\":\"\",\"errors\":null},\"responseCode\":{\"valid\":true}},\"passed\":true,\"timings\":{\"started\":1749645582687,\"preProcessorsStarted\":1749645582702,\"preProcessorsCompleted\":1749645582702,\"postProcessorsStarted\":1749645582764,\"postProcessorsCompleted\":1749645582764,\"completed\":1749645582765},\"metaInfo\":{\"httpApiId\":307455169,\"httpApiCaseId\":0,\"httpApiName\":\"get 查\",\"httpApiPath\":\"/todos\",\"httpApiMethod\":\"get\",\"httpApiCaseName\":\"\"}}",
+                    "visibility": "INHERITED",
+                    "moduleId": 5598660,
+                    "preProcessors": [],
+                    "postProcessors": [],
+                    "inheritPostProcessors": {},
+                    "inheritPreProcessors": {}
+                  }
+                ],
+                "mocks": [],
+                "customApiFields": "{}",
+                "advancedSettings": {
+                  "disabledSystemHeaders": {}
+                },
+                "mockScript": {},
+                "codeSamples": [],
+                "commonResponseStatus": {},
+                "responseChildren": [
+                  "BLANK.696632163"
+                ],
+                "visibility": "INHERITED",
+                "moduleId": 5598660,
+                "oasExtensions": "",
+                "preProcessors": [],
+                "postProcessors": [],
+                "inheritPostProcessors": {},
+                "inheritPreProcessors": {}
+              }
+            },
+            {
+              "name": "put 增",
+              "api": {
+                "id": "308632496",
+                "method": "put",
+                "path": "/rest/{id}",
+                "parameters": {
+                  "path": [
+                    {
+                      "id": "id#0",
+                      "name": "id",
+                      "required": true,
+                      "description": "",
+                      "type": "string",
+                      "enable": true
+                    }
+                  ]
+                },
+                "auth": {},
+                "securityScheme": {},
+                "commonParameters": {
+                  "query": [],
+                  "body": [],
+                  "cookie": [],
+                  "header": []
+                },
+                "responses": [
+                  {
+                    "id": "697430065",
+                    "code": 201,
+                    "name": "成功",
+                    "headers": [],
+                    "jsonSchema": {
+                      "type": "object",
+                      "properties": {}
+                    },
+                    "description": "",
+                    "contentType": "json",
+                    "mediaType": "",
+                    "oasExtensions": ""
+                  }
+                ],
+                "responseExamples": [],
+                "requestBody": {
+                  "type": "application/json",
+                  "parameters": [],
+                  "jsonSchema": {
+                    "type": "object",
+                    "properties": {
+                      "data": {
+                        "type": [
+                          "string",
+                          "integer",
+                          "boolean",
+                          "array",
+                          "object",
+                          "number",
+                          "null"
+                        ],
+                        "x-apifox-mock": "{{$string.sample}}"
+                      }
+                    },
+                    "x-apifox-orders": [
+                      "data"
+                    ],
+                    "required": [
+                      "data"
+                    ]
+                  },
+                  "mediaType": "",
+                  "examples": [],
+                  "oasExtensions": ""
+                },
+                "description": "创建新的待办事项",
+                "tags": [],
+                "status": "developing",
+                "serverId": "",
+                "operationId": "",
+                "sourceUrl": "",
+                "ordering": 12,
+                "cases": [
+                  {
+                    "id": 271393174,
+                    "type": "http",
+                    "path": null,
+                    "name": "成功",
+                    "responseId": 697430065,
+                    "parameters": {
+                      "query": [],
+                      "path": [
+                        {
+                          "id": "id#0",
+                          "name": "id",
+                          "relatedId": "id#0",
+                          "enable": true,
+                          "isDelete": false,
+                          "value": "{{uuid}}",
+                          "relatedName": "id"
+                        }
+                      ],
+                      "cookie": [],
+                      "header": []
+                    },
+                    "commonParameters": {
+                      "query": [],
+                      "body": [],
+                      "header": [],
+                      "cookie": []
+                    },
+                    "requestBody": {
+                      "parameters": [],
+                      "data": "{\n    \"data\": \"{{$string.sample}}\"\n}",
+                      "generateMode": "normal"
+                    },
+                    "auth": {},
+                    "securityScheme": {},
+                    "advancedSettings": {
+                      "disabledSystemHeaders": {}
+                    },
+                    "requestResult": "{\"id\":\"temp.437d46ae-6ae2-4d95-b577-552e2e1b6a13\",\"cursor\":{\"position\":0,\"iteration\":0,\"length\":1,\"cycles\":1,\"empty\":false,\"eof\":false,\"bof\":true,\"cr\":false,\"ref\":\"437d46ae-6ae2-4d95-b577-552e2e1b6a13\",\"requestIndex\":0,\"httpRequestId\":\"061bc5b6-9408-45e4-83bb-67d29e5b2313\"},\"type\":\"http\",\"response\":{\"id\":\"b25d9760-1cb0-4d1f-b46e-47a811eed8c8\",\"status\":\"Created\",\"code\":201,\"header\":[{\"key\":\"content-type\",\"value\":\"application/json\"},{\"key\":\"content-length\",\"value\":\"97\"},{\"key\":\"date\",\"value\":\"Wed, 11 Jun 2025 12:40:12 GMT\"}],\"trailer\":[],\"stream\":{\"type\":\"Buffer\",\"data\":[123,34,105,100,34,58,34,102,99,99,97,50,101,101,97,45,57,99,50,53,45,52,100,51,99,45,56,100,102,99,45,101,50,100,100,99,52,101,99,101,98,48,50,34,44,34,116,101,120,116,34,58,34,229,177,149,229,174,185,228,184,147,230,157,131,229,174,182,233,135,135,229,174,182,227,128,130,34,44,34,99,111,109,112,108,101,116,101,100,34,58,102,97,108,115,101,125]},\"cookie\":[],\"responseTime\":2,\"responseSize\":97,\"type\":\"http\",\"tempFilePath\":\"\"},\"request\":{\"url\":{\"protocol\":\"http\",\"port\":\"24042\",\"path\":[\"todos\"],\"host\":[\"127\",\"0\",\"0\",\"1\"],\"query\":[],\"variable\":[]},\"header\":[{\"key\":\"User-Agent\",\"value\":\"Apifox/1.0.0 (https://apifox.com)\"},{\"key\":\"Content-Type\",\"value\":\"application/json\"},{\"key\":\"Accept\",\"value\":\"*/*\",\"system\":true},{\"key\":\"Host\",\"value\":\"127.0.0.1:24042\",\"system\":true},{\"key\":\"Accept-Encoding\",\"value\":\"gzip, deflate, br\",\"system\":true},{\"key\":\"Connection\",\"value\":\"keep-alive\",\"system\":true},{\"key\":\"Content-Length\",\"value\":42,\"system\":true}],\"method\":\"POST\",\"baseUrl\":\"127.0.0.1:24042\",\"body\":{\"mode\":\"raw\",\"raw\":\"{\\n    \\\"text\\\": \\\"展容专权家采家。\\\"\\n}\",\"generateMode\":\"auto\",\"type\":\"application/json\"},\"type\":\"http\"},\"history\":{\"execution\":{\"verbose\":false,\"sessions\":{},\"data\":[{\"request\":{\"method\":\"POST\",\"href\":\"http://127.0.0.1:24042/todos\",\"headers\":[{\"key\":\"User-Agent\",\"value\":\"Apifox/1.0.0 (https://apifox.com)\"},{\"key\":\"Content-Type\",\"value\":\"application/json\"},{\"key\":\"Accept\",\"value\":\"*/*\"},{\"key\":\"Host\",\"value\":\"127.0.0.1:24042\"},{\"key\":\"Accept-Encoding\",\"value\":\"gzip, deflate, br\"},{\"key\":\"Connection\",\"value\":\"keep-alive\"},{\"key\":\"Content-Length\",\"value\":\"42\"}],\"httpVersion\":\"1.1\"},\"response\":{\"statusCode\":201,\"headers\":[{\"key\":\"content-type\",\"value\":\"application/json\"},{\"key\":\"content-length\",\"value\":\"97\"},{\"key\":\"date\",\"value\":\"Wed, 11 Jun 2025 12:40:12 GMT\"}],\"httpVersion\":\"1.1\"},\"timings\":{\"start\":1749645612343,\"requestStart\":1749645612343,\"offset\":{\"request\":0.39770007133483887,\"socket\":0.5946999788284302,\"response\":1.415000081062317,\"end\":1.6779999732971191,\"lookup\":0.5946999788284302,\"connect\":0.5946999788284302,\"done\":1.6959000825881958}}}]}},\"responseValidation\":{\"schema\":{\"valid\":true,\"message\":\"\",\"errors\":null},\"responseCode\":{\"valid\":false,\"result\":{\"actual\":201,\"expect\":200},\"message\":\"应当是 200 实际却是 201\"}},\"passed\":false,\"timings\":{\"started\":1749645612280,\"preProcessorsStarted\":1749645612296,\"preProcessorsCompleted\":1749645612296,\"postProcessorsStarted\":1749645612358,\"postProcessorsCompleted\":1749645612358,\"completed\":1749645612359},\"metaInfo\":{\"httpApiId\":307455252,\"httpApiCaseId\":270607141,\"httpApiName\":\"post 增\",\"httpApiPath\":\"/todos\",\"httpApiMethod\":\"post\",\"httpApiCaseName\":\"成功\"}}",
+                    "visibility": "INHERITED",
+                    "moduleId": 5598660,
+                    "preProcessors": [],
+                    "postProcessors": [],
+                    "inheritPostProcessors": {},
+                    "inheritPreProcessors": {}
+                  }
+                ],
+                "mocks": [],
+                "customApiFields": "{}",
+                "advancedSettings": {
+                  "disabledSystemHeaders": {}
+                },
+                "mockScript": {},
+                "codeSamples": [],
+                "commonResponseStatus": {},
+                "responseChildren": [
+                  "BLANK.697430065"
+                ],
+                "visibility": "INHERITED",
+                "moduleId": 5598660,
+                "oasExtensions": "",
+                "preProcessors": [],
+                "postProcessors": [],
+                "inheritPostProcessors": {},
+                "inheritPreProcessors": {}
+              }
+            },
+            {
+              "name": "put 增-随机",
+              "api": {
+                "id": "308632832",
+                "method": "put",
+                "path": "/todos",
+                "parameters": {},
+                "auth": {},
+                "securityScheme": {},
+                "commonParameters": {
+                  "query": [],
+                  "body": [],
+                  "cookie": [],
+                  "header": []
+                },
+                "responses": [
+                  {
+                    "id": "697430067",
+                    "code": 201,
+                    "name": "成功",
+                    "headers": [],
+                    "jsonSchema": {
+                      "type": "object",
+                      "properties": {}
+                    },
+                    "description": "",
+                    "contentType": "json",
+                    "mediaType": "",
+                    "oasExtensions": ""
+                  }
+                ],
+                "responseExamples": [],
+                "requestBody": {
+                  "type": "application/json",
+                  "parameters": [],
+                  "jsonSchema": {
+                    "type": "object",
+                    "properties": {
+                      "data": {
+                        "type": [
+                          "string",
+                          "integer",
+                          "boolean",
+                          "array",
+                          "object",
+                          "number",
+                          "null"
+                        ],
+                        "x-apifox-mock": "{{$string.sample}}"
+                      }
+                    },
+                    "x-apifox-orders": [
+                      "data"
+                    ],
+                    "required": [
+                      "data"
+                    ]
+                  },
+                  "mediaType": "",
+                  "examples": [],
+                  "oasExtensions": ""
+                },
+                "description": "创建新的待办事项",
+                "tags": [],
+                "status": "developing",
+                "serverId": "",
+                "operationId": "",
+                "sourceUrl": "",
+                "ordering": 21,
+                "cases": [
+                  {
+                    "id": 271400752,
+                    "type": "http",
+                    "path": null,
+                    "name": "成功",
+                    "responseId": 697430067,
+                    "parameters": {
+                      "query": [],
+                      "path": [],
+                      "cookie": [],
+                      "header": []
+                    },
+                    "commonParameters": {
+                      "query": [],
+                      "body": [],
+                      "header": [],
+                      "cookie": []
+                    },
+                    "requestBody": {
+                      "parameters": [],
+                      "data": "{\n    \"data\": \"{{$string.sample}}\"\n}",
+                      "generateMode": "normal"
+                    },
+                    "auth": {},
+                    "securityScheme": {},
+                    "advancedSettings": {
+                      "disabledSystemHeaders": {}
+                    },
+                    "requestResult": "{\"id\":\"temp.437d46ae-6ae2-4d95-b577-552e2e1b6a13\",\"cursor\":{\"position\":0,\"iteration\":0,\"length\":1,\"cycles\":1,\"empty\":false,\"eof\":false,\"bof\":true,\"cr\":false,\"ref\":\"437d46ae-6ae2-4d95-b577-552e2e1b6a13\",\"requestIndex\":0,\"httpRequestId\":\"061bc5b6-9408-45e4-83bb-67d29e5b2313\"},\"type\":\"http\",\"response\":{\"id\":\"b25d9760-1cb0-4d1f-b46e-47a811eed8c8\",\"status\":\"Created\",\"code\":201,\"header\":[{\"key\":\"content-type\",\"value\":\"application/json\"},{\"key\":\"content-length\",\"value\":\"97\"},{\"key\":\"date\",\"value\":\"Wed, 11 Jun 2025 12:40:12 GMT\"}],\"trailer\":[],\"stream\":{\"type\":\"Buffer\",\"data\":[123,34,105,100,34,58,34,102,99,99,97,50,101,101,97,45,57,99,50,53,45,52,100,51,99,45,56,100,102,99,45,101,50,100,100,99,52,101,99,101,98,48,50,34,44,34,116,101,120,116,34,58,34,229,177,149,229,174,185,228,184,147,230,157,131,229,174,182,233,135,135,229,174,182,227,128,130,34,44,34,99,111,109,112,108,101,116,101,100,34,58,102,97,108,115,101,125]},\"cookie\":[],\"responseTime\":2,\"responseSize\":97,\"type\":\"http\",\"tempFilePath\":\"\"},\"request\":{\"url\":{\"protocol\":\"http\",\"port\":\"24042\",\"path\":[\"todos\"],\"host\":[\"127\",\"0\",\"0\",\"1\"],\"query\":[],\"variable\":[]},\"header\":[{\"key\":\"User-Agent\",\"value\":\"Apifox/1.0.0 (https://apifox.com)\"},{\"key\":\"Content-Type\",\"value\":\"application/json\"},{\"key\":\"Accept\",\"value\":\"*/*\",\"system\":true},{\"key\":\"Host\",\"value\":\"127.0.0.1:24042\",\"system\":true},{\"key\":\"Accept-Encoding\",\"value\":\"gzip, deflate, br\",\"system\":true},{\"key\":\"Connection\",\"value\":\"keep-alive\",\"system\":true},{\"key\":\"Content-Length\",\"value\":42,\"system\":true}],\"method\":\"POST\",\"baseUrl\":\"127.0.0.1:24042\",\"body\":{\"mode\":\"raw\",\"raw\":\"{\\n    \\\"text\\\": \\\"展容专权家采家。\\\"\\n}\",\"generateMode\":\"auto\",\"type\":\"application/json\"},\"type\":\"http\"},\"history\":{\"execution\":{\"verbose\":false,\"sessions\":{},\"data\":[{\"request\":{\"method\":\"POST\",\"href\":\"http://127.0.0.1:24042/todos\",\"headers\":[{\"key\":\"User-Agent\",\"value\":\"Apifox/1.0.0 (https://apifox.com)\"},{\"key\":\"Content-Type\",\"value\":\"application/json\"},{\"key\":\"Accept\",\"value\":\"*/*\"},{\"key\":\"Host\",\"value\":\"127.0.0.1:24042\"},{\"key\":\"Accept-Encoding\",\"value\":\"gzip, deflate, br\"},{\"key\":\"Connection\",\"value\":\"keep-alive\"},{\"key\":\"Content-Length\",\"value\":\"42\"}],\"httpVersion\":\"1.1\"},\"response\":{\"statusCode\":201,\"headers\":[{\"key\":\"content-type\",\"value\":\"application/json\"},{\"key\":\"content-length\",\"value\":\"97\"},{\"key\":\"date\",\"value\":\"Wed, 11 Jun 2025 12:40:12 GMT\"}],\"httpVersion\":\"1.1\"},\"timings\":{\"start\":1749645612343,\"requestStart\":1749645612343,\"offset\":{\"request\":0.39770007133483887,\"socket\":0.5946999788284302,\"response\":1.415000081062317,\"end\":1.6779999732971191,\"lookup\":0.5946999788284302,\"connect\":0.5946999788284302,\"done\":1.6959000825881958}}}]}},\"responseValidation\":{\"schema\":{\"valid\":true,\"message\":\"\",\"errors\":null},\"responseCode\":{\"valid\":false,\"result\":{\"actual\":201,\"expect\":200},\"message\":\"应当是 200 实际却是 201\"}},\"passed\":false,\"timings\":{\"started\":1749645612280,\"preProcessorsStarted\":1749645612296,\"preProcessorsCompleted\":1749645612296,\"postProcessorsStarted\":1749645612358,\"postProcessorsCompleted\":1749645612358,\"completed\":1749645612359},\"metaInfo\":{\"httpApiId\":307455252,\"httpApiCaseId\":270607141,\"httpApiName\":\"post 增\",\"httpApiPath\":\"/todos\",\"httpApiMethod\":\"post\",\"httpApiCaseName\":\"成功\"}}",
+                    "visibility": "INHERITED",
+                    "moduleId": 5598660,
+                    "preProcessors": [],
+                    "postProcessors": [],
+                    "inheritPostProcessors": {},
+                    "inheritPreProcessors": {}
+                  }
+                ],
+                "mocks": [],
+                "customApiFields": "{}",
+                "advancedSettings": {
+                  "disabledSystemHeaders": {}
+                },
+                "mockScript": {},
+                "codeSamples": [],
+                "commonResponseStatus": {},
+                "responseChildren": [
+                  "BLANK.697430067"
+                ],
+                "visibility": "INHERITED",
+                "moduleId": 5598660,
+                "oasExtensions": "",
+                "preProcessors": [],
+                "postProcessors": [],
+                "inheritPostProcessors": {},
+                "inheritPreProcessors": {}
+              }
+            },
+            {
+              "name": "post 增",
+              "api": {
+                "id": "308133543",
+                "method": "post",
+                "path": "/rest/{id}",
+                "parameters": {
+                  "path": [
+                    {
+                      "id": "id#0",
+                      "name": "id",
+                      "required": true,
+                      "description": "",
+                      "type": "string",
+                      "enable": true
+                    }
+                  ]
+                },
+                "auth": {},
+                "securityScheme": {},
+                "commonParameters": {
+                  "query": [],
+                  "body": [],
+                  "cookie": [],
+                  "header": []
+                },
+                "responses": [
+                  {
+                    "id": "696632164",
+                    "code": 201,
+                    "name": "成功",
+                    "headers": [],
+                    "jsonSchema": {
+                      "type": "object",
+                      "properties": {}
+                    },
+                    "description": "",
+                    "contentType": "json",
+                    "mediaType": "",
+                    "oasExtensions": ""
+                  }
+                ],
+                "responseExamples": [],
+                "requestBody": {
+                  "type": "application/json",
+                  "parameters": [],
+                  "jsonSchema": {
+                    "type": "object",
+                    "properties": {
+                      "data": {
+                        "type": [
+                          "string",
+                          "integer",
+                          "boolean",
+                          "array",
+                          "object",
+                          "number",
+                          "null"
+                        ],
+                        "x-apifox-mock": "{{$string.sample}}"
+                      }
+                    },
+                    "x-apifox-orders": [
+                      "data"
+                    ],
+                    "required": [
+                      "data"
+                    ]
+                  },
+                  "mediaType": "",
+                  "examples": [],
+                  "oasExtensions": ""
+                },
+                "description": "创建新的待办事项",
+                "tags": [],
+                "status": "developing",
+                "serverId": "",
+                "operationId": "",
+                "sourceUrl": "",
+                "ordering": 6,
+                "cases": [
+                  {
+                    "id": 270998294,
+                    "type": "http",
+                    "path": null,
+                    "name": "成功",
+                    "responseId": 696632164,
+                    "parameters": {
+                      "query": [],
+                      "path": [
+                        {
+                          "id": "id#0",
+                          "name": "id",
+                          "relatedId": "id#0",
+                          "enable": true,
+                          "isDelete": false,
+                          "value": "{{uuid}}",
+                          "relatedName": "id"
+                        }
+                      ],
+                      "cookie": [],
+                      "header": []
+                    },
+                    "commonParameters": {
+                      "query": [],
+                      "body": [],
+                      "header": [],
+                      "cookie": []
+                    },
+                    "requestBody": {
+                      "parameters": [],
+                      "data": "{\n    \"data\": \"{{$string.sample}}\"\n}",
+                      "generateMode": "normal"
+                    },
+                    "auth": {},
+                    "securityScheme": {},
+                    "advancedSettings": {
+                      "disabledSystemHeaders": {}
+                    },
+                    "requestResult": "{\"id\":\"temp.437d46ae-6ae2-4d95-b577-552e2e1b6a13\",\"cursor\":{\"position\":0,\"iteration\":0,\"length\":1,\"cycles\":1,\"empty\":false,\"eof\":false,\"bof\":true,\"cr\":false,\"ref\":\"437d46ae-6ae2-4d95-b577-552e2e1b6a13\",\"requestIndex\":0,\"httpRequestId\":\"061bc5b6-9408-45e4-83bb-67d29e5b2313\"},\"type\":\"http\",\"response\":{\"id\":\"b25d9760-1cb0-4d1f-b46e-47a811eed8c8\",\"status\":\"Created\",\"code\":201,\"header\":[{\"key\":\"content-type\",\"value\":\"application/json\"},{\"key\":\"content-length\",\"value\":\"97\"},{\"key\":\"date\",\"value\":\"Wed, 11 Jun 2025 12:40:12 GMT\"}],\"trailer\":[],\"stream\":{\"type\":\"Buffer\",\"data\":[123,34,105,100,34,58,34,102,99,99,97,50,101,101,97,45,57,99,50,53,45,52,100,51,99,45,56,100,102,99,45,101,50,100,100,99,52,101,99,101,98,48,50,34,44,34,116,101,120,116,34,58,34,229,177,149,229,174,185,228,184,147,230,157,131,229,174,182,233,135,135,229,174,182,227,128,130,34,44,34,99,111,109,112,108,101,116,101,100,34,58,102,97,108,115,101,125]},\"cookie\":[],\"responseTime\":2,\"responseSize\":97,\"type\":\"http\",\"tempFilePath\":\"\"},\"request\":{\"url\":{\"protocol\":\"http\",\"port\":\"24042\",\"path\":[\"todos\"],\"host\":[\"127\",\"0\",\"0\",\"1\"],\"query\":[],\"variable\":[]},\"header\":[{\"key\":\"User-Agent\",\"value\":\"Apifox/1.0.0 (https://apifox.com)\"},{\"key\":\"Content-Type\",\"value\":\"application/json\"},{\"key\":\"Accept\",\"value\":\"*/*\",\"system\":true},{\"key\":\"Host\",\"value\":\"127.0.0.1:24042\",\"system\":true},{\"key\":\"Accept-Encoding\",\"value\":\"gzip, deflate, br\",\"system\":true},{\"key\":\"Connection\",\"value\":\"keep-alive\",\"system\":true},{\"key\":\"Content-Length\",\"value\":42,\"system\":true}],\"method\":\"POST\",\"baseUrl\":\"127.0.0.1:24042\",\"body\":{\"mode\":\"raw\",\"raw\":\"{\\n    \\\"text\\\": \\\"展容专权家采家。\\\"\\n}\",\"generateMode\":\"auto\",\"type\":\"application/json\"},\"type\":\"http\"},\"history\":{\"execution\":{\"verbose\":false,\"sessions\":{},\"data\":[{\"request\":{\"method\":\"POST\",\"href\":\"http://127.0.0.1:24042/todos\",\"headers\":[{\"key\":\"User-Agent\",\"value\":\"Apifox/1.0.0 (https://apifox.com)\"},{\"key\":\"Content-Type\",\"value\":\"application/json\"},{\"key\":\"Accept\",\"value\":\"*/*\"},{\"key\":\"Host\",\"value\":\"127.0.0.1:24042\"},{\"key\":\"Accept-Encoding\",\"value\":\"gzip, deflate, br\"},{\"key\":\"Connection\",\"value\":\"keep-alive\"},{\"key\":\"Content-Length\",\"value\":\"42\"}],\"httpVersion\":\"1.1\"},\"response\":{\"statusCode\":201,\"headers\":[{\"key\":\"content-type\",\"value\":\"application/json\"},{\"key\":\"content-length\",\"value\":\"97\"},{\"key\":\"date\",\"value\":\"Wed, 11 Jun 2025 12:40:12 GMT\"}],\"httpVersion\":\"1.1\"},\"timings\":{\"start\":1749645612343,\"requestStart\":1749645612343,\"offset\":{\"request\":0.39770007133483887,\"socket\":0.5946999788284302,\"response\":1.415000081062317,\"end\":1.6779999732971191,\"lookup\":0.5946999788284302,\"connect\":0.5946999788284302,\"done\":1.6959000825881958}}}]}},\"responseValidation\":{\"schema\":{\"valid\":true,\"message\":\"\",\"errors\":null},\"responseCode\":{\"valid\":false,\"result\":{\"actual\":201,\"expect\":200},\"message\":\"应当是 200 实际却是 201\"}},\"passed\":false,\"timings\":{\"started\":1749645612280,\"preProcessorsStarted\":1749645612296,\"preProcessorsCompleted\":1749645612296,\"postProcessorsStarted\":1749645612358,\"postProcessorsCompleted\":1749645612358,\"completed\":1749645612359},\"metaInfo\":{\"httpApiId\":307455252,\"httpApiCaseId\":270607141,\"httpApiName\":\"post 增\",\"httpApiPath\":\"/todos\",\"httpApiMethod\":\"post\",\"httpApiCaseName\":\"成功\"}}",
+                    "visibility": "INHERITED",
+                    "moduleId": 5598660,
+                    "preProcessors": [],
+                    "postProcessors": [],
+                    "inheritPostProcessors": {},
+                    "inheritPreProcessors": {}
+                  }
+                ],
+                "mocks": [],
+                "customApiFields": "{}",
+                "advancedSettings": {
+                  "disabledSystemHeaders": {}
+                },
+                "mockScript": {},
+                "codeSamples": [],
+                "commonResponseStatus": {},
+                "responseChildren": [
+                  "BLANK.696632164"
+                ],
+                "visibility": "INHERITED",
+                "moduleId": 5598660,
+                "oasExtensions": "",
+                "preProcessors": [],
+                "postProcessors": [],
+                "inheritPostProcessors": {},
+                "inheritPreProcessors": {}
+              }
+            },
+            {
+              "name": "post 增-随机",
+              "api": {
+                "id": "308133544",
+                "method": "post",
+                "path": "/todos",
+                "parameters": {},
+                "auth": {},
+                "securityScheme": {},
+                "commonParameters": {
+                  "query": [],
+                  "body": [],
+                  "cookie": [],
+                  "header": []
+                },
+                "responses": [
+                  {
+                    "id": "696632165",
+                    "code": 201,
+                    "name": "成功",
+                    "headers": [],
+                    "jsonSchema": {
+                      "type": "object",
+                      "properties": {}
+                    },
+                    "description": "",
+                    "contentType": "json",
+                    "mediaType": "",
+                    "oasExtensions": ""
+                  }
+                ],
+                "responseExamples": [],
+                "requestBody": {
+                  "type": "application/json",
+                  "parameters": [],
+                  "jsonSchema": {
+                    "type": "object",
+                    "properties": {
+                      "data": {
+                        "type": [
+                          "string",
+                          "integer",
+                          "boolean",
+                          "array",
+                          "object",
+                          "number",
+                          "null"
+                        ],
+                        "x-apifox-mock": "{{$string.sample}}"
+                      }
+                    },
+                    "x-apifox-orders": [
+                      "data"
+                    ],
+                    "required": [
+                      "data"
+                    ]
+                  },
+                  "mediaType": "",
+                  "examples": [],
+                  "oasExtensions": ""
+                },
+                "description": "创建新的待办事项",
+                "tags": [],
+                "status": "developing",
+                "serverId": "",
+                "operationId": "",
+                "sourceUrl": "",
+                "ordering": 18,
+                "cases": [
+                  {
+                    "id": 270998296,
+                    "type": "http",
+                    "path": null,
+                    "name": "成功",
+                    "responseId": 696632165,
+                    "parameters": {
+                      "query": [],
+                      "path": [],
+                      "cookie": [],
+                      "header": []
+                    },
+                    "commonParameters": {
+                      "query": [],
+                      "body": [],
+                      "header": [],
+                      "cookie": []
+                    },
+                    "requestBody": {
+                      "parameters": [],
+                      "data": "{\n    \"data\": \"{{$string.sample}}\"\n}",
+                      "generateMode": "normal"
+                    },
+                    "auth": {},
+                    "securityScheme": {},
+                    "advancedSettings": {
+                      "disabledSystemHeaders": {}
+                    },
+                    "requestResult": "{\"id\":\"temp.437d46ae-6ae2-4d95-b577-552e2e1b6a13\",\"cursor\":{\"position\":0,\"iteration\":0,\"length\":1,\"cycles\":1,\"empty\":false,\"eof\":false,\"bof\":true,\"cr\":false,\"ref\":\"437d46ae-6ae2-4d95-b577-552e2e1b6a13\",\"requestIndex\":0,\"httpRequestId\":\"061bc5b6-9408-45e4-83bb-67d29e5b2313\"},\"type\":\"http\",\"response\":{\"id\":\"b25d9760-1cb0-4d1f-b46e-47a811eed8c8\",\"status\":\"Created\",\"code\":201,\"header\":[{\"key\":\"content-type\",\"value\":\"application/json\"},{\"key\":\"content-length\",\"value\":\"97\"},{\"key\":\"date\",\"value\":\"Wed, 11 Jun 2025 12:40:12 GMT\"}],\"trailer\":[],\"stream\":{\"type\":\"Buffer\",\"data\":[123,34,105,100,34,58,34,102,99,99,97,50,101,101,97,45,57,99,50,53,45,52,100,51,99,45,56,100,102,99,45,101,50,100,100,99,52,101,99,101,98,48,50,34,44,34,116,101,120,116,34,58,34,229,177,149,229,174,185,228,184,147,230,157,131,229,174,182,233,135,135,229,174,182,227,128,130,34,44,34,99,111,109,112,108,101,116,101,100,34,58,102,97,108,115,101,125]},\"cookie\":[],\"responseTime\":2,\"responseSize\":97,\"type\":\"http\",\"tempFilePath\":\"\"},\"request\":{\"url\":{\"protocol\":\"http\",\"port\":\"24042\",\"path\":[\"todos\"],\"host\":[\"127\",\"0\",\"0\",\"1\"],\"query\":[],\"variable\":[]},\"header\":[{\"key\":\"User-Agent\",\"value\":\"Apifox/1.0.0 (https://apifox.com)\"},{\"key\":\"Content-Type\",\"value\":\"application/json\"},{\"key\":\"Accept\",\"value\":\"*/*\",\"system\":true},{\"key\":\"Host\",\"value\":\"127.0.0.1:24042\",\"system\":true},{\"key\":\"Accept-Encoding\",\"value\":\"gzip, deflate, br\",\"system\":true},{\"key\":\"Connection\",\"value\":\"keep-alive\",\"system\":true},{\"key\":\"Content-Length\",\"value\":42,\"system\":true}],\"method\":\"POST\",\"baseUrl\":\"127.0.0.1:24042\",\"body\":{\"mode\":\"raw\",\"raw\":\"{\\n    \\\"text\\\": \\\"展容专权家采家。\\\"\\n}\",\"generateMode\":\"auto\",\"type\":\"application/json\"},\"type\":\"http\"},\"history\":{\"execution\":{\"verbose\":false,\"sessions\":{},\"data\":[{\"request\":{\"method\":\"POST\",\"href\":\"http://127.0.0.1:24042/todos\",\"headers\":[{\"key\":\"User-Agent\",\"value\":\"Apifox/1.0.0 (https://apifox.com)\"},{\"key\":\"Content-Type\",\"value\":\"application/json\"},{\"key\":\"Accept\",\"value\":\"*/*\"},{\"key\":\"Host\",\"value\":\"127.0.0.1:24042\"},{\"key\":\"Accept-Encoding\",\"value\":\"gzip, deflate, br\"},{\"key\":\"Connection\",\"value\":\"keep-alive\"},{\"key\":\"Content-Length\",\"value\":\"42\"}],\"httpVersion\":\"1.1\"},\"response\":{\"statusCode\":201,\"headers\":[{\"key\":\"content-type\",\"value\":\"application/json\"},{\"key\":\"content-length\",\"value\":\"97\"},{\"key\":\"date\",\"value\":\"Wed, 11 Jun 2025 12:40:12 GMT\"}],\"httpVersion\":\"1.1\"},\"timings\":{\"start\":1749645612343,\"requestStart\":1749645612343,\"offset\":{\"request\":0.39770007133483887,\"socket\":0.5946999788284302,\"response\":1.415000081062317,\"end\":1.6779999732971191,\"lookup\":0.5946999788284302,\"connect\":0.5946999788284302,\"done\":1.6959000825881958}}}]}},\"responseValidation\":{\"schema\":{\"valid\":true,\"message\":\"\",\"errors\":null},\"responseCode\":{\"valid\":false,\"result\":{\"actual\":201,\"expect\":200},\"message\":\"应当是 200 实际却是 201\"}},\"passed\":false,\"timings\":{\"started\":1749645612280,\"preProcessorsStarted\":1749645612296,\"preProcessorsCompleted\":1749645612296,\"postProcessorsStarted\":1749645612358,\"postProcessorsCompleted\":1749645612358,\"completed\":1749645612359},\"metaInfo\":{\"httpApiId\":307455252,\"httpApiCaseId\":270607141,\"httpApiName\":\"post 增\",\"httpApiPath\":\"/todos\",\"httpApiMethod\":\"post\",\"httpApiCaseName\":\"成功\"}}",
+                    "visibility": "INHERITED",
+                    "moduleId": 5598660,
+                    "preProcessors": [],
+                    "postProcessors": [],
+                    "inheritPostProcessors": {},
+                    "inheritPreProcessors": {}
+                  }
+                ],
+                "mocks": [],
+                "customApiFields": "{}",
+                "advancedSettings": {
+                  "disabledSystemHeaders": {}
+                },
+                "mockScript": {},
+                "codeSamples": [],
+                "commonResponseStatus": {},
+                "responseChildren": [
+                  "BLANK.696632165"
+                ],
+                "visibility": "INHERITED",
+                "moduleId": 5598660,
+                "oasExtensions": "",
+                "preProcessors": [],
+                "postProcessors": [],
+                "inheritPostProcessors": {},
+                "inheritPreProcessors": {}
+              }
+            },
+            {
+              "name": "patch 改",
+              "api": {
+                "id": "308133545",
+                "method": "patch",
+                "path": "/rest/{id}",
+                "parameters": {
+                  "path": [
+                    {
+                      "id": "id#0",
+                      "name": "id",
+                      "required": true,
+                      "description": "",
+                      "type": "string",
+                      "enable": true
+                    }
+                  ]
+                },
+                "auth": {},
+                "securityScheme": {},
+                "commonParameters": {
+                  "query": [],
+                  "body": [],
+                  "cookie": [],
+                  "header": []
+                },
+                "responses": [
+                  {
+                    "id": "696632166",
+                    "code": 200,
+                    "name": "成功",
+                    "headers": [],
+                    "jsonSchema": {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "type": [
+                            "string",
+                            "integer",
+                            "boolean",
+                            "array",
+                            "object",
+                            "number",
+                            "null"
+                          ],
+                          "x-apifox-mock": "{{$string.sample}}"
+                        }
+                      },
+                      "x-apifox-orders": [
+                        "data"
+                      ]
+                    },
+                    "description": "",
+                    "contentType": "json",
+                    "mediaType": "",
+                    "oasExtensions": ""
+                  }
+                ],
+                "responseExamples": [],
+                "requestBody": {
+                  "type": "none",
+                  "parameters": [],
+                  "mediaType": "",
+                  "examples": [],
+                  "oasExtensions": ""
+                },
+                "description": "更新指定ID的待办事项",
+                "tags": [],
+                "status": "developing",
+                "serverId": "",
+                "operationId": "",
+                "sourceUrl": "",
+                "ordering": 24,
+                "cases": [
+                  {
+                    "id": 270998299,
+                    "type": "http",
+                    "path": null,
+                    "name": "成功",
+                    "responseId": 696632166,
+                    "parameters": {
+                      "query": [],
+                      "path": [
+                        {
+                          "id": "id#0",
+                          "name": "id",
+                          "relatedId": "id#0",
+                          "enable": true,
+                          "isDelete": false,
+                          "value": "{{uuid}}",
+                          "relatedName": "id"
+                        }
+                      ],
+                      "cookie": [],
+                      "header": []
+                    },
+                    "commonParameters": {
+                      "query": [],
+                      "body": [],
+                      "header": [],
+                      "cookie": []
+                    },
+                    "requestBody": {
+                      "parameters": [],
+                      "type": "application/json",
+                      "data": "{\r\n    \"data\": \"{{$string.sample}}\"\r\n}",
+                      "generateMode": "normal"
+                    },
+                    "auth": {},
+                    "securityScheme": {},
+                    "advancedSettings": {
+                      "disabledSystemHeaders": {}
+                    },
+                    "requestResult": "{\"id\":\"temp.9f9a49ee-2200-4748-8323-df38d39b0312\",\"cursor\":{\"position\":0,\"iteration\":0,\"length\":1,\"cycles\":1,\"empty\":false,\"eof\":false,\"bof\":true,\"cr\":false,\"ref\":\"9f9a49ee-2200-4748-8323-df38d39b0312\",\"requestIndex\":0,\"httpRequestId\":\"29f4f32d-1b09-4d9f-9ead-0fcaac7b998b\"},\"type\":\"http\",\"response\":{\"id\":\"11386557-5b3a-4500-9df2-bd8c0f5095d4\",\"status\":\"OK\",\"code\":200,\"header\":[{\"key\":\"content-type\",\"value\":\"application/json\"},{\"key\":\"content-length\",\"value\":\"100\"},{\"key\":\"date\",\"value\":\"Wed, 11 Jun 2025 12:47:40 GMT\"}],\"trailer\":[],\"stream\":{\"type\":\"Buffer\",\"data\":[123,34,105,100,34,58,34,102,99,99,97,50,101,101,97,45,57,99,50,53,45,52,100,51,99,45,56,100,102,99,45,101,50,100,100,99,52,101,99,101,98,48,50,34,44,34,116,101,120,116,34,58,34,231,160,148,229,173,144,230,149,153,231,155,180,229,189,177,228,186,178,228,184,186,228,184,147,227,128,130,34,44,34,99,111,109,112,108,101,116,101,100,34,58,102,97,108,115,101,125]},\"cookie\":[],\"responseTime\":2,\"responseSize\":100,\"type\":\"http\",\"tempFilePath\":\"\"},\"request\":{\"url\":{\"protocol\":\"http\",\"port\":\"24042\",\"path\":[\"todos\",\"fcca2eea-9c25-4d3c-8dfc-e2ddc4eceb02\"],\"host\":[\"127\",\"0\",\"0\",\"1\"],\"query\":[],\"variable\":[]},\"header\":[{\"key\":\"User-Agent\",\"value\":\"Apifox/1.0.0 (https://apifox.com)\"},{\"key\":\"Content-Type\",\"value\":\"application/json\"},{\"key\":\"Accept\",\"value\":\"*/*\",\"system\":true},{\"key\":\"Host\",\"value\":\"127.0.0.1:24042\",\"system\":true},{\"key\":\"Accept-Encoding\",\"value\":\"gzip, deflate, br\",\"system\":true},{\"key\":\"Connection\",\"value\":\"keep-alive\",\"system\":true},{\"key\":\"Content-Length\",\"value\":72,\"system\":true}],\"method\":\"PATCH\",\"baseUrl\":\"127.0.0.1:24042\",\"body\":{\"mode\":\"raw\",\"raw\":\"{\\r\\n    \\\"text\\\": \\\"研子教直影亲为专。\\\",\\r\\n    \\\"completed\\\": false\\r\\n}\",\"generateMode\":\"normal\",\"type\":\"application/json\"},\"type\":\"http\"},\"history\":{\"execution\":{\"verbose\":false,\"sessions\":{},\"data\":[{\"request\":{\"method\":\"PATCH\",\"href\":\"http://127.0.0.1:24042/todos/fcca2eea-9c25-4d3c-8dfc-e2ddc4eceb02\",\"headers\":[{\"key\":\"User-Agent\",\"value\":\"Apifox/1.0.0 (https://apifox.com)\"},{\"key\":\"Content-Type\",\"value\":\"application/json\"},{\"key\":\"Accept\",\"value\":\"*/*\"},{\"key\":\"Host\",\"value\":\"127.0.0.1:24042\"},{\"key\":\"Accept-Encoding\",\"value\":\"gzip, deflate, br\"},{\"key\":\"Connection\",\"value\":\"keep-alive\"},{\"key\":\"Content-Length\",\"value\":\"72\"}],\"httpVersion\":\"1.1\"},\"response\":{\"statusCode\":200,\"headers\":[{\"key\":\"content-type\",\"value\":\"application/json\"},{\"key\":\"content-length\",\"value\":\"100\"},{\"key\":\"date\",\"value\":\"Wed, 11 Jun 2025 12:47:40 GMT\"}],\"httpVersion\":\"1.1\"},\"timings\":{\"start\":1749646060119,\"requestStart\":1749646060120,\"offset\":{\"request\":0.36730003356933594,\"socket\":0.5313999652862549,\"response\":1.4775999784469604,\"end\":1.8589999675750732,\"lookup\":0.5313999652862549,\"connect\":0.5313999652862549,\"done\":1.8770999908447266}}}]}},\"responseValidation\":{\"schema\":{\"valid\":true,\"message\":\"\",\"errors\":null},\"responseCode\":{\"valid\":true}},\"passed\":true,\"timings\":{\"started\":1749646060059,\"preProcessorsStarted\":1749646060073,\"preProcessorsCompleted\":1749646060073,\"postProcessorsStarted\":1749646060135,\"postProcessorsCompleted\":1749646060135,\"completed\":1749646060136},\"metaInfo\":{\"httpApiId\":307455608,\"httpApiCaseId\":270607663,\"httpApiName\":\"patch 改\",\"httpApiPath\":\"/todos/fcca2eea-9c25-4d3c-8dfc-e2ddc4eceb02\",\"httpApiMethod\":\"patch\",\"httpApiCaseName\":\"\"}}",
+                    "visibility": "INHERITED",
+                    "moduleId": 5598660,
+                    "preProcessors": [],
+                    "postProcessors": [],
+                    "inheritPostProcessors": {},
+                    "inheritPreProcessors": {}
+                  }
+                ],
+                "mocks": [],
+                "customApiFields": "{}",
+                "advancedSettings": {
+                  "disabledSystemHeaders": {}
+                },
+                "mockScript": {},
+                "codeSamples": [],
+                "commonResponseStatus": {},
+                "responseChildren": [
+                  "BLANK.696632166"
+                ],
+                "visibility": "INHERITED",
+                "moduleId": 5598660,
+                "oasExtensions": "",
+                "preProcessors": [],
+                "postProcessors": [],
+                "inheritPostProcessors": {},
+                "inheritPreProcessors": {}
+              }
+            },
+            {
+              "name": "delete 删",
+              "api": {
+                "id": "308133546",
+                "method": "delete",
+                "path": "/rest/{id}",
+                "parameters": {
+                  "path": [
+                    {
+                      "id": "id#0",
+                      "name": "id",
+                      "required": true,
+                      "description": "",
+                      "type": "string",
+                      "enable": true
+                    }
+                  ]
+                },
+                "auth": {},
+                "securityScheme": {},
+                "commonParameters": {
+                  "query": [],
+                  "body": [],
+                  "cookie": [],
+                  "header": []
+                },
+                "responses": [
+                  {
+                    "id": "696632167",
+                    "code": 204,
+                    "name": "删除成功",
+                    "headers": [],
+                    "jsonSchema": {
+                      "type": "object",
+                      "properties": {}
+                    },
+                    "description": "",
+                    "contentType": "noContent",
+                    "mediaType": "",
+                    "oasExtensions": ""
+                  }
+                ],
+                "responseExamples": [],
+                "requestBody": {
+                  "type": "none",
+                  "parameters": [],
+                  "mediaType": "",
+                  "examples": [],
+                  "oasExtensions": ""
+                },
+                "description": "删除指定ID的待办事项",
+                "tags": [],
+                "status": "developing",
+                "serverId": "",
+                "operationId": "",
+                "sourceUrl": "",
+                "ordering": 30,
+                "cases": [
+                  {
+                    "id": 270998300,
+                    "type": "http",
+                    "path": null,
+                    "name": "成功",
+                    "responseId": 696632167,
+                    "parameters": {
+                      "query": [],
+                      "path": [
+                        {
+                          "id": "id#0",
+                          "name": "id",
+                          "relatedId": "id#0",
+                          "value": "{{uuid}}",
+                          "enable": true,
+                          "isDelete": false,
+                          "relatedName": "id"
+                        }
+                      ],
+                      "cookie": [],
+                      "header": []
+                    },
+                    "commonParameters": {
+                      "query": [],
+                      "body": [],
+                      "header": [],
+                      "cookie": []
+                    },
+                    "requestBody": {
+                      "parameters": [],
+                      "generateMode": "normal"
+                    },
+                    "auth": {},
+                    "securityScheme": {},
+                    "advancedSettings": {
+                      "disabledSystemHeaders": {}
+                    },
+                    "requestResult": "{\"id\":\"temp.a316c3cc-1811-4194-ba22-98cc7d221c74\",\"cursor\":{\"position\":0,\"iteration\":0,\"length\":1,\"cycles\":1,\"empty\":false,\"eof\":false,\"bof\":true,\"cr\":false,\"ref\":\"a316c3cc-1811-4194-ba22-98cc7d221c74\",\"requestIndex\":0,\"httpRequestId\":\"057b9e26-e01c-488a-9de3-242fd54387fa\"},\"type\":\"http\",\"response\":{\"id\":\"4c169efa-7b3c-4d55-9ee8-674950566258\",\"status\":\"No Content\",\"code\":204,\"header\":[{\"key\":\"date\",\"value\":\"Wed, 11 Jun 2025 13:11:03 GMT\"}],\"trailer\":[],\"stream\":{\"type\":\"Buffer\",\"data\":[]},\"cookie\":[],\"responseTime\":2,\"responseSize\":0,\"type\":\"http\",\"tempFilePath\":\"\",\"timingPhases\":{\"prepare\":0.6224000453948975,\"wait\":0.18429994583129883,\"dns\":0,\"tcp\":0,\"firstByte\":0.8939000368118286,\"download\":0.3579000234603882,\"process\":0.03620004653930664,\"total\":2.0947000980377197}},\"request\":{\"url\":{\"protocol\":\"http\",\"port\":\"24042\",\"path\":[\"todos\",\"fcca2eea-9c25-4d3c-8dfc-e2ddc4eceb02\"],\"host\":[\"127\",\"0\",\"0\",\"1\"],\"query\":[],\"variable\":[]},\"header\":[{\"key\":\"User-Agent\",\"value\":\"Apifox/1.0.0 (https://apifox.com)\"},{\"key\":\"Accept\",\"value\":\"*/*\",\"system\":true},{\"key\":\"Host\",\"value\":\"127.0.0.1:24042\",\"system\":true},{\"key\":\"Accept-Encoding\",\"value\":\"gzip, deflate, br\",\"system\":true},{\"key\":\"Connection\",\"value\":\"keep-alive\",\"system\":true}],\"method\":\"DELETE\",\"baseUrl\":\"127.0.0.1:24042\",\"body\":{},\"type\":\"http\"},\"history\":{\"execution\":{\"verbose\":false,\"sessions\":{},\"data\":[{\"request\":{\"method\":\"DELETE\",\"href\":\"http://127.0.0.1:24042/todos/fcca2eea-9c25-4d3c-8dfc-e2ddc4eceb02\",\"headers\":[{\"key\":\"User-Agent\",\"value\":\"Apifox/1.0.0 (https://apifox.com)\"},{\"key\":\"Accept\",\"value\":\"*/*\"},{\"key\":\"Host\",\"value\":\"127.0.0.1:24042\"},{\"key\":\"Accept-Encoding\",\"value\":\"gzip, deflate, br\"},{\"key\":\"Connection\",\"value\":\"keep-alive\"}],\"httpVersion\":\"1.1\"},\"response\":{\"statusCode\":204,\"headers\":[{\"key\":\"date\",\"value\":\"Wed, 11 Jun 2025 13:11:03 GMT\"}],\"httpVersion\":\"1.1\"},\"timings\":{\"start\":1749647463114,\"requestStart\":1749647463115,\"offset\":{\"request\":0.6224000453948975,\"socket\":0.8066999912261963,\"response\":1.700600028038025,\"end\":2.058500051498413,\"lookup\":0.8066999912261963,\"connect\":0.8066999912261963,\"done\":2.0947000980377197}}}]}},\"responseValidation\":{\"schema\":{\"valid\":false,\"result\":{\"expect\":\"JSON\",\"actual\":\"Raw\"},\"message\":\"返回的数据格式不是 JSON\"},\"responseCode\":{\"valid\":false,\"result\":{\"actual\":204,\"expect\":200},\"message\":\"应当是 200 实际却是 204\"}},\"passed\":false,\"timings\":{\"started\":1749647463052,\"preProcessorsStarted\":1749647463067,\"preProcessorsCompleted\":1749647463067,\"postProcessorsStarted\":1749647463130,\"postProcessorsCompleted\":1749647463130,\"completed\":1749647463131},\"metaInfo\":{\"httpApiId\":307455429,\"httpApiCaseId\":0,\"httpApiName\":\"delete 删\",\"httpApiPath\":\"/todos/{id}\",\"httpApiMethod\":\"delete\",\"httpApiCaseName\":\"\"}}",
+                    "visibility": "INHERITED",
+                    "moduleId": 5598660,
+                    "preProcessors": [],
+                    "postProcessors": [],
+                    "inheritPostProcessors": {},
+                    "inheritPreProcessors": {}
+                  }
+                ],
+                "mocks": [],
+                "customApiFields": "{}",
+                "advancedSettings": {
+                  "disabledSystemHeaders": {}
+                },
+                "mockScript": {},
+                "codeSamples": [],
+                "commonResponseStatus": {},
+                "responseChildren": [
+                  "BLANK.696632167"
+                ],
+                "visibility": "INHERITED",
+                "moduleId": 5598660,
+                "oasExtensions": "",
+                "preProcessors": [],
+                "postProcessors": [],
+                "inheritPostProcessors": {},
+                "inheritPreProcessors": {}
+              }
+            }
+          ]
+        },
+        {
+          "name": "root",
+          "api": {
+            "id": "307452558",
+            "method": "get",
+            "path": "/",
+            "parameters": {},
+            "auth": {},
+            "securityScheme": {},
+            "commonParameters": {
+              "query": [],
+              "body": [],
+              "cookie": [],
+              "header": []
+            },
+            "responses": [
+              {
+                "id": "695464235",
+                "code": 200,
+                "name": "成功",
+                "headers": [],
+                "jsonSchema": {
+                  "type": "object",
+                  "properties": {}
+                },
+                "description": "",
+                "contentType": "html",
+                "mediaType": "",
+                "oasExtensions": ""
+              }
+            ],
+            "responseExamples": [],
+            "requestBody": {
+              "type": "none",
+              "parameters": [],
+              "mediaType": "",
+              "examples": [],
+              "oasExtensions": ""
+            },
+            "description": "",
+            "tags": [],
+            "status": "developing",
+            "serverId": "",
+            "operationId": "",
+            "sourceUrl": "",
+            "ordering": 10,
+            "cases": [],
+            "mocks": [],
+            "customApiFields": "{}",
+            "advancedSettings": {
+              "disabledSystemHeaders": {}
+            },
+            "mockScript": {},
+            "codeSamples": [],
+            "commonResponseStatus": {},
+            "responseChildren": [
+              "BLANK.695464235"
+            ],
+            "visibility": "INHERITED",
+            "moduleId": 5598660,
+            "oasExtensions": "",
+            "preProcessors": [],
+            "postProcessors": [],
+            "inheritPostProcessors": {},
+            "inheritPreProcessors": {}
+          }
+        },
+        {
+          "name": "heartbeat 心跳检测",
+          "api": {
+            "id": "308694094",
+            "method": "get",
+            "path": "/heartbeat",
+            "parameters": {},
+            "auth": {},
+            "securityScheme": {},
+            "commonParameters": {
+              "query": [],
+              "body": [],
+              "cookie": [],
+              "header": []
+            },
+            "responses": [
+              {
+                "id": "697530325",
+                "code": 200,
+                "name": "成功",
+                "headers": [],
+                "jsonSchema": {
+                  "type": "object",
+                  "properties": {}
+                },
+                "description": "",
+                "contentType": "json",
+                "mediaType": "",
+                "oasExtensions": ""
+              }
+            ],
+            "responseExamples": [],
+            "requestBody": {
+              "type": "none",
+              "parameters": [],
+              "mediaType": "",
+              "examples": [],
+              "oasExtensions": ""
+            },
+            "description": "",
+            "tags": [],
+            "status": "developing",
+            "serverId": "",
+            "operationId": "",
+            "sourceUrl": "",
+            "ordering": 20,
+            "cases": [],
+            "mocks": [],
+            "customApiFields": "{}",
+            "advancedSettings": {
+              "disabledSystemHeaders": {}
+            },
+            "mockScript": {},
+            "codeSamples": [],
+            "commonResponseStatus": {},
+            "responseChildren": [
+              "BLANK.697530325"
+            ],
+            "visibility": "INHERITED",
+            "moduleId": 5598660,
+            "oasExtensions": "",
+            "preProcessors": [],
+            "postProcessors": [],
+            "inheritPostProcessors": {},
+            "inheritPreProcessors": {}
+          }
+        }
+      ]
+    }
+  ],
+  "socketCollection": [],
+  "docCollection": [],
+  "webSocketCollection": [],
+  "socketIOCollection": [],
+  "responseCollection": [
+    {
+      "_databaseId": 6841611,
+      "updatedAt": "2025-06-11T08:23:30.000Z",
+      "name": "根目录",
+      "type": "root",
+      "children": [],
+      "moduleId": 5598660,
+      "parentId": 0,
+      "id": 6841611,
+      "ordering": [],
+      "items": []
+    }
+  ],
+  "schemaCollection": [
+    {
+      "id": 14834763,
+      "name": "根目录",
+      "visibility": "SHARED",
+      "moduleId": 5598660,
+      "items": [],
+      "ordering": []
+    }
+  ],
+  "securitySchemeCollection": [
+    {
+      "id": 1294257,
+      "name": "根目录",
+      "items": [],
+      "ordering": []
+    }
+  ],
+  "requestCollection": [
+    {
+      "name": "根目录",
+      "children": [],
+      "ordering": [
+        "requestFolder.6950747"
+      ],
+      "items": []
+    }
+  ],
+  "apiTestCaseCollection": [
+    {
+      "name": "Root",
+      "children": [],
+      "items": [
+        {
+          "steps": [
+            {
+              "name": "get 查 (成功)",
+              "number": 1,
+              "type": "http",
+              "bind": false,
+              "disable": false,
+              "bindType": "API",
+              "bindId": 307455169,
+              "syncMode": "MANUAL",
+              "httpApiCase": {
+                "id": 270612576,
+                "name": "成功",
+                "method": "get",
+                "path": "/todos",
+                "auth": {},
+                "type": "http",
+                "options": {
+                  "duplicatedFrom": 270610737
+                },
+                "parameters": {
+                  "query": [],
+                  "header": [],
+                  "cookie": [],
+                  "path": []
+                },
+                "responseId": 695461248,
+                "requestBody": {
+                  "parameters": [],
+                  "type": "none",
+                  "data": "",
+                  "generateMode": "normal"
+                },
+                "preProcessors": [
+                  {
+                    "type": "placeholder",
+                    "renderType": "dynamicValueDivider",
+                    "defaultEnable": false,
+                    "enable": false
+                  }
+                ],
+                "postProcessors": [],
+                "advancedSettings": {
+                  "disabledSystemHeaders": {}
+                },
+                "commonParameters": {
+                  "query": [],
+                  "body": [],
+                  "header": [],
+                  "cookie": []
+                },
+                "inheritPreProcessors": {},
+                "inheritPostProcessors": {},
+                "inheritPreProcessorsSnapshot": [],
+                "inheritPostProcessorsSnapshot": [],
+                "moduleId": 5598660,
+                "apiId": 307455169
+              }
+            },
+            {
+              "name": "post 增 (成功)",
+              "number": 6,
+              "type": "http",
+              "bind": false,
+              "disable": false,
+              "bindType": "API",
+              "bindId": 307455252,
+              "syncMode": "MANUAL",
+              "httpApiCase": {
+                "id": 270997819,
+                "name": "成功",
+                "method": "post",
+                "path": "/todos/{id}",
+                "auth": {},
+                "type": "http",
+                "options": {
+                  "duplicatedFrom": 270607141
+                },
+                "parameters": {
+                  "query": [],
+                  "header": [],
+                  "cookie": [],
+                  "path": [
+                    {
+                      "id": "id#0",
+                      "name": "id",
+                      "relatedId": "id#0",
+                      "value": "{{uuid}}",
+                      "type": "string",
+                      "description": "",
+                      "enable": true,
+                      "isDelete": false,
+                      "relatedName": "id"
+                    }
+                  ]
+                },
+                "responseId": 695466691,
+                "requestBody": {
+                  "parameters": [],
+                  "type": "application/json",
+                  "data": "{\n    \"text\": \"{{$lorem.sentence(min=3,max=10)}}\"\n}",
+                  "jsonSchema": {
+                    "type": "object",
+                    "properties": {
+                      "text": {
+                        "type": "string",
+                        "title": "待办事项",
+                        "x-apifox-mock": "{{$lorem.sentence(min=3,max=10)}}"
+                      }
+                    },
+                    "x-apifox-orders": [
+                      "text"
+                    ],
+                    "required": [
+                      "text"
+                    ]
+                  },
+                  "generateMode": "normal"
+                },
+                "preProcessors": [
+                  {
+                    "type": "placeholder",
+                    "renderType": "dynamicValueDivider",
+                    "defaultEnable": false,
+                    "enable": false
+                  }
+                ],
+                "postProcessors": [],
+                "advancedSettings": {
+                  "disabledSystemHeaders": {}
+                },
+                "commonParameters": {
+                  "query": [],
+                  "body": [],
+                  "header": [],
+                  "cookie": []
+                },
+                "inheritPreProcessors": {},
+                "inheritPostProcessors": {},
+                "inheritPreProcessorsSnapshot": [],
+                "inheritPostProcessorsSnapshot": [],
+                "moduleId": 5598660,
+                "apiId": 307455252
+              }
+            },
+            {
+              "name": "patch 改 (成功)",
+              "number": 5,
+              "type": "http",
+              "bind": false,
+              "disable": false,
+              "bindType": "API",
+              "bindId": 307455608,
+              "syncMode": "MANUAL",
+              "httpApiCase": {
+                "id": 270613708,
+                "name": "成功",
+                "method": "patch",
+                "path": "/todos/{id}",
+                "auth": {},
+                "type": "http",
+                "options": {
+                  "duplicatedFrom": 270608684
+                },
+                "parameters": {
+                  "query": [],
+                  "header": [],
+                  "cookie": [],
+                  "path": [
+                    {
+                      "id": "id#0",
+                      "name": "id",
+                      "relatedId": "id#0",
+                      "value": "{{uuid}}",
+                      "type": "string",
+                      "description": "",
+                      "enable": true,
+                      "isDelete": false,
+                      "relatedName": "id"
+                    }
+                  ]
+                },
+                "responseId": 695459053,
+                "requestBody": {
+                  "parameters": [],
+                  "type": "application/json",
+                  "data": "{\r\n    \"text\": \"{{$lorem.sentence(min=3,max=10)}}\",\r\n    \"completed\": {{$datatype.boolean}}\r\n}",
+                  "generateMode": "normal"
+                },
+                "preProcessors": [
+                  {
+                    "type": "placeholder",
+                    "renderType": "dynamicValueDivider",
+                    "defaultEnable": false,
+                    "enable": false
+                  }
+                ],
+                "postProcessors": [],
+                "advancedSettings": {
+                  "disabledSystemHeaders": {}
+                },
+                "commonParameters": {
+                  "query": [],
+                  "body": [],
+                  "header": [],
+                  "cookie": []
+                },
+                "inheritPreProcessors": {},
+                "inheritPostProcessors": {},
+                "inheritPreProcessorsSnapshot": [],
+                "inheritPostProcessorsSnapshot": [],
+                "moduleId": 5598660,
+                "apiId": 307455608
+              }
+            },
+            {
+              "name": "get 查 (成功)",
+              "number": 2,
+              "type": "http",
+              "bind": false,
+              "disable": false,
+              "bindType": "API",
+              "bindId": 307455169,
+              "syncMode": "MANUAL",
+              "httpApiCase": {
+                "id": 270613711,
+                "name": "成功",
+                "method": "get",
+                "path": "/todos",
+                "auth": {},
+                "type": "http",
+                "options": {
+                  "duplicatedFrom": 270610737
+                },
+                "parameters": {
+                  "query": [],
+                  "header": [],
+                  "cookie": [],
+                  "path": []
+                },
+                "responseId": 695461248,
+                "requestBody": {
+                  "parameters": [],
+                  "type": "none",
+                  "data": "",
+                  "generateMode": "normal"
+                },
+                "preProcessors": [
+                  {
+                    "type": "placeholder",
+                    "renderType": "dynamicValueDivider",
+                    "defaultEnable": false,
+                    "enable": false
+                  }
+                ],
+                "postProcessors": [],
+                "advancedSettings": {
+                  "disabledSystemHeaders": {}
+                },
+                "commonParameters": {
+                  "query": [],
+                  "body": [],
+                  "header": [],
+                  "cookie": []
+                },
+                "inheritPreProcessors": {},
+                "inheritPostProcessors": {},
+                "inheritPreProcessorsSnapshot": [],
+                "inheritPostProcessorsSnapshot": [],
+                "moduleId": 5598660,
+                "apiId": 307455169
+              }
+            },
+            {
+              "name": "delete 删 (成功)",
+              "number": 4,
+              "type": "http",
+              "bind": false,
+              "disable": false,
+              "bindType": "API",
+              "bindId": 307455429,
+              "syncMode": "MANUAL",
+              "httpApiCase": {
+                "id": 270613709,
+                "name": "成功",
+                "method": "delete",
+                "path": "/todos/{id}",
+                "auth": {},
+                "type": "http",
+                "options": {
+                  "duplicatedFrom": 270612090
+                },
+                "parameters": {
+                  "query": [],
+                  "header": [],
+                  "cookie": [],
+                  "path": [
+                    {
+                      "id": "id#0",
+                      "name": "id",
+                      "relatedId": "id#0",
+                      "value": "{{uuid}}",
+                      "type": "string",
+                      "description": "",
+                      "enable": true,
+                      "isDelete": false,
+                      "relatedName": "id"
+                    }
+                  ]
+                },
+                "responseId": 695461706,
+                "requestBody": {
+                  "parameters": [],
+                  "type": "none",
+                  "data": "",
+                  "generateMode": "normal"
+                },
+                "preProcessors": [
+                  {
+                    "type": "placeholder",
+                    "renderType": "dynamicValueDivider",
+                    "defaultEnable": false,
+                    "enable": false
+                  }
+                ],
+                "postProcessors": [],
+                "advancedSettings": {
+                  "disabledSystemHeaders": {}
+                },
+                "commonParameters": {
+                  "query": [],
+                  "body": [],
+                  "header": [],
+                  "cookie": []
+                },
+                "inheritPreProcessors": {},
+                "inheritPostProcessors": {},
+                "inheritPreProcessorsSnapshot": [],
+                "inheritPostProcessorsSnapshot": [],
+                "moduleId": 5598660,
+                "apiId": 307455429
+              }
+            }
+          ],
+          "id": 6718828,
+          "name": "todos CRUA",
+          "tags": [],
+          "options": {},
+          "priority": 2,
+          "ordering": 10,
+          "description": "",
+          "preProcessors": [],
+          "postProcessors": [],
+          "children": [],
+          "performanceTestOptions": {},
+          "apiTestDataSets": []
+        },
+        {
+          "steps": [
+            {
+              "id": "c67a116b-ce83-4082-bf23-b3afe777411a",
+              "type": "script",
+              "disable": false,
+              "parameters": {
+                "data": "\r\npm.variables.set(\"variable_key\", \"variable_value\");\r\npm.variables.get(\"variable_key\");\r\n",
+                "type": "customScript",
+                "defaultEnable": true,
+                "enable": true
+              },
+              "name": "未命名",
+              "number": 8
+            },
+            {
+              "name": "get 查-全 (成功)",
+              "number": 7,
+              "type": "http",
+              "bind": false,
+              "disable": false,
+              "bindType": "API",
+              "bindId": 308133542,
+              "syncMode": "MANUAL",
+              "httpApiCase": {
+                "id": 271000182,
+                "name": "成功",
+                "method": "get",
+                "path": "/rest",
+                "auth": {},
+                "type": "http",
+                "options": {
+                  "duplicatedFrom": 270998293
+                },
+                "parameters": {
+                  "query": [],
+                  "header": [],
+                  "cookie": [],
+                  "path": []
+                },
+                "responseId": 696632163,
+                "requestBody": {
+                  "parameters": [],
+                  "type": "none",
+                  "data": "",
+                  "generateMode": "normal"
+                },
+                "preProcessors": [
+                  {
+                    "type": "placeholder",
+                    "renderType": "dynamicValueDivider",
+                    "defaultEnable": false,
+                    "enable": false
+                  }
+                ],
+                "postProcessors": [],
+                "advancedSettings": {
+                  "disabledSystemHeaders": {}
+                },
+                "commonParameters": {
+                  "query": [],
+                  "body": [],
+                  "header": [],
+                  "cookie": []
+                },
+                "inheritPreProcessors": {},
+                "inheritPostProcessors": {},
+                "inheritPreProcessorsSnapshot": [],
+                "inheritPostProcessorsSnapshot": [],
+                "moduleId": 5598660,
+                "apiId": 308133542
+              }
+            },
+            {
+              "name": "post 增 (成功)",
+              "number": 2,
+              "type": "http",
+              "bind": false,
+              "disable": false,
+              "bindType": "API",
+              "bindId": 308133543,
+              "syncMode": "MANUAL",
+              "httpApiCase": {
+                "id": 270999999,
+                "name": "成功",
+                "method": "post",
+                "path": "/rest/{id}",
+                "auth": {},
+                "type": "http",
+                "options": {
+                  "duplicatedFrom": 270998294
+                },
+                "parameters": {
+                  "query": [],
+                  "header": [],
+                  "cookie": [],
+                  "path": [
+                    {
+                      "id": "id#0",
+                      "name": "id",
+                      "relatedId": "id#0",
+                      "value": "{{uuid}}",
+                      "type": "string",
+                      "description": "",
+                      "enable": true,
+                      "isDelete": false,
+                      "relatedName": "id"
+                    }
+                  ]
+                },
+                "responseId": 696632164,
+                "requestBody": {
+                  "parameters": [],
+                  "type": "application/json",
+                  "data": "{\n    \"data\": \"{{$string.sample}}\"\n}",
+                  "jsonSchema": {
+                    "type": "object",
+                    "properties": {
+                      "data": {
+                        "type": "string",
+                        "x-apifox-mock": "{{$string.sample}}"
+                      }
+                    },
+                    "x-apifox-orders": [
+                      "data"
+                    ],
+                    "required": [
+                      "data"
+                    ]
+                  },
+                  "generateMode": "normal"
+                },
+                "preProcessors": [
+                  {
+                    "type": "placeholder",
+                    "renderType": "dynamicValueDivider",
+                    "defaultEnable": false,
+                    "enable": false
+                  }
+                ],
+                "postProcessors": [],
+                "advancedSettings": {
+                  "disabledSystemHeaders": {}
+                },
+                "commonParameters": {
+                  "query": [],
+                  "body": [],
+                  "header": [],
+                  "cookie": []
+                },
+                "inheritPreProcessors": {},
+                "inheritPostProcessors": {},
+                "inheritPreProcessorsSnapshot": [],
+                "inheritPostProcessorsSnapshot": [],
+                "moduleId": 5598660,
+                "apiId": 308133543
+              }
+            },
+            {
+              "name": "patch 改 (成功)",
+              "number": 6,
+              "type": "http",
+              "bind": false,
+              "disable": false,
+              "bindType": "API",
+              "bindId": 308133545,
+              "syncMode": "MANUAL",
+              "httpApiCase": {
+                "id": 271000179,
+                "name": "成功",
+                "method": "patch",
+                "path": "/rest/{id}",
+                "auth": {},
+                "type": "http",
+                "options": {
+                  "duplicatedFrom": 270998299
+                },
+                "parameters": {
+                  "query": [],
+                  "header": [],
+                  "cookie": [],
+                  "path": [
+                    {
+                      "id": "id#0",
+                      "name": "id",
+                      "relatedId": "id#0",
+                      "value": "{{uuid}}",
+                      "type": "string",
+                      "description": "",
+                      "enable": true,
+                      "isDelete": false,
+                      "relatedName": "id"
+                    }
+                  ]
+                },
+                "responseId": 696632166,
+                "requestBody": {
+                  "parameters": [],
+                  "type": "application/json",
+                  "data": "{\r\n    \"data\": \"{{$string.sample}}\"\r\n}",
+                  "generateMode": "normal"
+                },
+                "preProcessors": [
+                  {
+                    "type": "placeholder",
+                    "renderType": "dynamicValueDivider",
+                    "defaultEnable": false,
+                    "enable": false
+                  }
+                ],
+                "postProcessors": [],
+                "advancedSettings": {
+                  "disabledSystemHeaders": {}
+                },
+                "commonParameters": {
+                  "query": [],
+                  "body": [],
+                  "header": [],
+                  "cookie": []
+                },
+                "inheritPreProcessors": {},
+                "inheritPostProcessors": {},
+                "inheritPreProcessorsSnapshot": [],
+                "inheritPostProcessorsSnapshot": [],
+                "moduleId": 5598660,
+                "apiId": 308133545
+              }
+            },
+            {
+              "name": "get 查-全 (成功)",
+              "number": 5,
+              "type": "http",
+              "bind": false,
+              "disable": false,
+              "bindType": "API",
+              "bindId": 308133542,
+              "syncMode": "MANUAL",
+              "httpApiCase": {
+                "id": 271000180,
+                "name": "成功",
+                "method": "get",
+                "path": "/rest",
+                "auth": {},
+                "type": "http",
+                "options": {
+                  "duplicatedFrom": 270998293
+                },
+                "parameters": {
+                  "query": [],
+                  "header": [],
+                  "cookie": [],
+                  "path": []
+                },
+                "responseId": 696632163,
+                "requestBody": {
+                  "parameters": [],
+                  "type": "none",
+                  "data": "",
+                  "generateMode": "normal"
+                },
+                "preProcessors": [
+                  {
+                    "type": "placeholder",
+                    "renderType": "dynamicValueDivider",
+                    "defaultEnable": false,
+                    "enable": false
+                  }
+                ],
+                "postProcessors": [],
+                "advancedSettings": {
+                  "disabledSystemHeaders": {}
+                },
+                "commonParameters": {
+                  "query": [],
+                  "body": [],
+                  "header": [],
+                  "cookie": []
+                },
+                "inheritPreProcessors": {},
+                "inheritPostProcessors": {},
+                "inheritPreProcessorsSnapshot": [],
+                "inheritPostProcessorsSnapshot": [],
+                "moduleId": 5598660,
+                "apiId": 308133542
+              }
+            },
+            {
+              "name": "delete 删 (成功)",
+              "number": 4,
+              "type": "http",
+              "bind": false,
+              "disable": false,
+              "bindType": "API",
+              "bindId": 308133546,
+              "syncMode": "MANUAL",
+              "httpApiCase": {
+                "id": 270999997,
+                "name": "成功",
+                "method": "delete",
+                "path": "/rest/{id}",
+                "auth": {},
+                "type": "http",
+                "options": {
+                  "duplicatedFrom": 270998300
+                },
+                "parameters": {
+                  "query": [],
+                  "header": [],
+                  "cookie": [],
+                  "path": [
+                    {
+                      "id": "id#0",
+                      "name": "id",
+                      "relatedId": "id#0",
+                      "value": "{{uuid}}",
+                      "type": "string",
+                      "description": "",
+                      "enable": true,
+                      "isDelete": false,
+                      "relatedName": "id"
+                    }
+                  ]
+                },
+                "responseId": 696632167,
+                "requestBody": {
+                  "parameters": [],
+                  "type": "none",
+                  "data": "",
+                  "generateMode": "normal"
+                },
+                "preProcessors": [
+                  {
+                    "type": "placeholder",
+                    "renderType": "dynamicValueDivider",
+                    "defaultEnable": false,
+                    "enable": false
+                  }
+                ],
+                "postProcessors": [],
+                "advancedSettings": {
+                  "disabledSystemHeaders": {}
+                },
+                "commonParameters": {
+                  "query": [],
+                  "body": [],
+                  "header": [],
+                  "cookie": []
+                },
+                "inheritPreProcessors": {},
+                "inheritPostProcessors": {},
+                "inheritPreProcessorsSnapshot": [],
+                "inheritPostProcessorsSnapshot": [],
+                "moduleId": 5598660,
+                "apiId": 308133546
+              }
+            }
+          ],
+          "id": 6724757,
+          "name": "rest CRUA",
+          "tags": [],
+          "options": {},
+          "priority": 2,
+          "ordering": 21,
+          "description": "",
+          "preProcessors": [],
+          "postProcessors": [],
+          "children": [],
+          "performanceTestOptions": {},
+          "apiTestDataSets": []
+        }
+      ]
+    }
+  ],
+  "testCaseReferences": [],
+  "environments": [],
+  "commonScripts": [],
+  "databaseConnections": [],
+  "globalVariables": [
+    {
+      "id": "6559308",
+      "variables": [
+        {
+          "name": "uuid",
+          "value": "",
+          "description": "",
+          "isBindInitial": false,
+          "initialValue": "",
+          "isSync": true
+        }
+      ]
+    }
+  ],
+  "commonParameters": null,
+  "projectSetting": {
+    "id": "6591712",
+    "auth": {},
+    "securityScheme": {},
+    "servers": [
+      {
+        "id": "default",
+        "name": "默认服务"
+      }
+    ],
+    "gateway": [],
+    "language": "zh-CN",
+    "apiStatuses": [
+      "developing",
+      "testing",
+      "released",
+      "deprecated"
+    ],
+    "mockSettings": {},
+    "preProcessors": [],
+    "postProcessors": [],
+    "advancedSettings": {
+      "enableJsonc": false,
+      "enableBigint": false,
+      "responseValidate": true,
+      "enableTestScenarioSetting": false,
+      "enableYAPICompatScript": false,
+      "isDefaultUrlEncoding": 2,
+      "publishedDocUrlRules": {
+        "defaultRule": "RESOURCE_KEY_ONLY",
+        "resourceKeyStandard": "NEW"
+      }
+    },
+    "initialDisabledMockIds": [],
+    "cloudMock": {
+      "security": "free",
+      "enable": false,
+      "tokenKey": "apifoxToken"
+    }
+  },
+  "customFunctions": [],
+  "projectAssociations": []
+}
