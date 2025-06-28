@@ -69,9 +69,9 @@ async fn main() {
     let app = Router::new()
         .route("/", get(api::test::root))
         .merge(api::heartbeat::factory_utils_router())
-        .merge(api::todos::factory_todos_router().await)
-        .merge(api::rest::factory_rest_router().await)
-        .merge(api::node::factory_node_router().await)
+        .merge(api::rest_todos::factory_todos_router().await)
+        .merge(api::rest_store::factory_rest_router().await)
+        .merge(api::rest_node::factory_node_router().await)
         .layer(cors);
     let listener = tokio::net::TcpListener::bind("127.0.0.1:24042") // 绑定TCP监听端口
         .await

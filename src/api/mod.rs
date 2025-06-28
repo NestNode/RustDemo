@@ -5,6 +5,6 @@
 
 pub mod test;
 pub mod heartbeat;
-pub mod todos;
-pub mod rest;
-pub mod node;
+pub mod rest_todos;
+pub mod rest_store;
+pub mod rest_node;
