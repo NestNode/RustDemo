@@ -3,12 +3,16 @@
 //! 负责服务器配置和启动
 
 use axum::{
-    http::{HeaderName, HeaderValue, Method},
+    http::{HeaderName, Method},
     routing::get,
     Router
 };
 use tower_http::cors::{Any, CorsLayer};
-use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt}; // 日志订阅系统
+use tracing_subscriber::{ // 日志订阅系统
+    layer::SubscriberExt,
+    util::SubscriberInitExt
+};
+
 mod api;
 
 /// 主异步函数，使用tokio运行时
@@ -23,7 +27,7 @@ async fn main() {
                 format!("{}=debug,tower_http=debug", env!("CARGO_CRATE_NAME")).into()
             }),
         )
-        .with(tracing_subscriber::fmt::layer()) // 输出格式
+        .with(tracing_subscriber::fmt::layer()) // 默认输出格式
         .init(); // 初始化
 
     // axum
@@ -75,3 +79,46 @@ async fn main() {
     tracing::info!("listening on {}", listener.local_addr().unwrap());
     axum::serve(listener, app).await.unwrap(); // 启动HTTP服务器
 }
+
+// /// 自定义日志的格式化器
+// /// 
+// /// 调换了打印内容和打印来源，以便对打印内容进行对齐
+// /// 缺点：损失了着色
+// ///
+// /// 使用:
+// /// .with( // 自定义输出格式
+// ///     tracing_subscriber::fmt::layer()
+// ///         .event_format(CustomEventFormatter)
+// /// )
+// ///
+// /// 如果只需要隐藏来源，可以直接在 `layout()` 后加上 `.with_target(false)`
+// struct CustomEventFormatter;
+// impl<S, N> FormatEvent<S, N> for CustomEventFormatter
+// where
+//     S: tracing::Subscriber + for<'a> LookupSpan<'a>,
+//     N: for<'a> FormatFields<'a> + 'static,
+// {
+//     fn format_event(
+//         &self,
+//         ctx: &FmtContext<'_, S, N>,
+//         mut writer: Writer<'_>,
+//         event: &tracing::Event<'_>,
+//     ) -> fmt::Result {
+//         // 获取当前时间
+//         let now = chrono::Utc::now();
+        
+//         // 写入时间戳
+//         write!(writer, "{} ", now.format("%Y-%m-%dT%H:%M:%S%.6fZ"))?;
+        
+//         // 写入日志级别
+//         write!(writer, "{:5} ", event.metadata().level())?;
+        
+//         // 写入消息内容（这是你的"打印内容"）
+//         ctx.field_format().format_fields(writer.by_ref(), event)?;
+        
+//         // 写入目标（这是你的"打印来源"，现在放在后面）
+//         write!(writer, " {}", event.metadata().target())?;
+        
+//         writeln!(writer)
+//     }
+// }
