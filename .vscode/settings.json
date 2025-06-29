@@ -1,0 +1,46 @@
+{
+    "commentTranslate.hover.enabled": false,
+    
+    "maptz.regionfolder": {
+        "[rust]": {
+            "foldEnd": "// #endregion",
+            "foldEndRegex": "//[\\s]*#endregion|/\\*[\\s]*#endregion",
+            "foldStart": "// #region [NAME]",
+            "foldStartRegex": "^[\\s]*//[\\s]*#region[\\s]*(.*)[\\s]*$|^[\\s]*/\\*[\\s]*#region[\\s]*(.*)[\\s]*\\*/[\\s]*$"
+        },
+        "[cpp]": {
+            "foldEnd": "// #endregion",
+            "foldEndRegex": "//[\\s]*#endregion|/\\*[\\s]*#endregion",
+            "foldStart": "// #region [NAME]",
+            "foldStartRegex": "^[\\s]*//[\\s]*#region[\\s]*(.*)[\\s]*$|^[\\s]*/\\*[\\s]*#region[\\s]*(.*)[\\s]*\\*/[\\s]*$"
+        },
+    },
+
+    "regionHighlighter.defaultTheme": "Custom Theme",
+    "regionHighlighter.customTheme": [
+        {
+            "label": "",
+            "color": "#C8E6F50d"
+        },
+        {
+            "label": "",
+            "color": "#AA82A00d"
+        },
+        {
+            "label": "",
+            "color": "#51AFE20d"
+        },
+        {
+            "label": "",
+            "color": "#FAEB5A0d"
+        },
+        {
+            "label": "",
+            "color": "#4DA96D0d"
+        },
+        {
+            "label": "",
+            "color": "#D050450d"
+        }
+    ],
+}

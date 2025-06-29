@@ -30,6 +30,8 @@ use uuid::Uuid;                         // 生成唯一ID
 // use tower::{BoxError, ServiceBuilder}; // 中间件构建工具
 // use tower_http::trace::TraceLayer;   // HTTP请求追踪
 
+// #region Node相关类型
+
 /// Node特征
 /// 
 /// 必须实现线程安全约束
@@ -68,10 +70,7 @@ impl Node for BasicNode {
 type Db = Arc<RwLock<HashMap<String, NodeRef>>>;
 type NodeRef = Arc<RwLock<dyn Node>>;
 
-#[derive(Debug, Deserialize)]
-struct RequestType {
-    data: Option<Value>,
-}
+// #endregion
 
 /// 创建 Node API 路由
 pub async fn factory_node_router() -> Router {
@@ -84,6 +83,8 @@ pub async fn factory_node_router() -> Router {
         .with_state(db); // 注入共享状态（节点存储）
     app
 }
+
+// #region 具体路由
 
 /**
  * GET /node/{id?} 获取项
@@ -101,16 +102,16 @@ async fn node_id_get(
         // 有id，则查找特定ID项
         Some(Path(id)) => {
             tracing::debug!("GET /node/{}", id);
-            let node = db.read().unwrap();
-            match node.get(&id) {
+            let nodes = db.read().unwrap();
+            match nodes.get(&id) {
                 Some(node) => {
-                    let serialized_node = node.read().unwrap();
-                    let response_data = serde_json::json!({
-                        "id": serialized_node.id(),
-                        "next_id": serialized_node.next_id(),
-                        "prev_id": serialized_node.prev_id(),
+                    let node = node.read().unwrap();
+                    let node = serde_json::json!({
+                        "id": node.id(),
+                        "next_id": node.next_id(),
+                        "prev_id": node.prev_id(),
                     });
-                    Json(response_data).into_response()
+                    Json(node).into_response()
                 },
                 None => {
                     StatusCode::NOT_FOUND.into_response()
@@ -120,17 +121,17 @@ async fn node_id_get(
         // 无id，返回所有项
         None => {
             tracing::debug!("GET /node/");
-            let node = db.read().unwrap();
-            let node = node
+            let nodes = db.read().unwrap();
+            let nodes: Vec<NodeRef> = nodes
                 .values()
-                .skip(pagination.offset.unwrap_or(0))           // 跳过指定偏移量
-                .take(pagination.limit.unwrap_or(usize::MAX))   // 限制返回数量
-                .cloned()                                       // 克隆数据
-                .collect::<Vec<_>>();                           // 收集为Vec
-            let serialized_nodes: Vec<_> = node
+                .skip(pagination.offset.unwrap_or(0))
+                .take(pagination.limit.unwrap_or(usize::MAX))
+                .cloned()
+                .collect::<Vec<_>>();
+            let nodes: Vec<_> = nodes
                 .iter()
-                .map(|node_ref| {
-                    let node = node_ref.read().unwrap();
+                .map(|node| {
+                    let node = node.read().unwrap();
                     serde_json::json!({
                         "id": node.id(),
                         "next_id": node.next_id(),
@@ -138,16 +139,9 @@ async fn node_id_get(
                     })
                 })
                 .collect();
-            Json(serialized_nodes).into_response()
+            Json(nodes).into_response()
         }
     }
-}
-#[derive(Debug, Deserialize, Default)]
-struct GetPagination {
-    /// 起始位置
-    offset: Option<usize>,
-    /// 数量限制
-    limit: Option<usize>,
 }
 
 /**
@@ -219,3 +213,20 @@ async fn node_delete(
 
     StatusCode::NOT_FOUND.into_response()
 }
+
+// -------- api struct -----------
+
+#[derive(Debug, Deserialize, Default)]
+struct GetPagination {
+    /// 起始位置
+    offset: Option<usize>,
+    /// 数量限制
+    limit: Option<usize>,
+}
+
+#[derive(Debug, Deserialize)]
+struct RequestType {
+    data: Option<Value>,
+}
+
+// #endregion

@@ -25,6 +25,8 @@ use uuid::Uuid;                         // 生成唯一ID
 // use tower::{BoxError, ServiceBuilder}; // 中间件构建工具
 // use tower_http::trace::TraceLayer;   // HTTP请求追踪
 
+// #region TODOS 相关类型
+
 /// 待办事项数据结构
 #[derive(Debug, Serialize, Clone)]
 struct Todo {
@@ -38,11 +40,7 @@ struct Todo {
 /// 数据库。`原子计数(多线程多所有权安全)<读写锁<HashMap(内存存储)>>`
 type Db = Arc<RwLock<HashMap<String, Todo>>>;
 
-#[derive(Debug, Deserialize)]
-struct RequestType {
-    text: Option<String>,
-    completed: Option<bool>,
-}
+// #endregion
 
 /// 创建 RESTful API 路由
 pub async fn factory_todos_router() -> Router {
@@ -95,13 +93,6 @@ async fn todos_id_get(
             Json(todos).into_response()
         }
     }
-}
-#[derive(Debug, Deserialize, Default)]
-struct GetPagination {
-    /// 起始位置
-    offset: Option<usize>,
-    /// 数量限制
-    limit: Option<usize>,
 }
 
 /**
@@ -216,4 +207,20 @@ async fn todos_id_delete (
     } else {
         StatusCode::NOT_FOUND
     }
+}
+
+// -------- api struct -----------
+
+#[derive(Debug, Deserialize, Default)]
+struct GetPagination {
+    /// 起始位置
+    offset: Option<usize>,
+    /// 数量限制
+    limit: Option<usize>,
+}
+
+#[derive(Debug, Deserialize)]
+struct RequestType {
+    text: Option<String>,
+    completed: Option<bool>,
 }

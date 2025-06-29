@@ -29,6 +29,8 @@ use uuid::Uuid;                         // 生成唯一ID
 // use tower::{BoxError, ServiceBuilder}; // 中间件构建工具
 // use tower_http::trace::TraceLayer;   // HTTP请求追踪
 
+// #region 存储项相关类型
+
 /// 存储项数据结构
 #[derive(Debug, Serialize, Clone)]
 struct Rest {
@@ -37,15 +39,13 @@ struct Rest {
     /// 事项内容 (可以是任意json项(object/string/...))
     data: Value,
 }
+
 /// 数据库
 /// 
 /// `原子计数(多线程多所有权安全)<读写锁<HashMap(内存存储)>>`
 type Db = Arc<RwLock<HashMap<String, Rest>>>;
 
-#[derive(Debug, Deserialize)]
-struct RequestType {
-    data: Option<Value>,
-}
+// #endregion
 
 /// 创建 RESTful API 路由
 pub async fn factory_rest_router() -> Router {
@@ -75,8 +75,8 @@ async fn rest_id_get(
         // 有id，则查找特定ID项
         Some(Path(id)) => {
             tracing::debug!("GET /rest/{}", id);
-            let rest = db.read().unwrap();
-            match rest.get(&id) {
+            let rests = db.read().unwrap();
+            match rests.get(&id) {
                 Some(rest) => {
                     Json(rest.clone()).into_response()
                 },
@@ -88,23 +88,16 @@ async fn rest_id_get(
         // 无id，返回所有项
         None => {
             tracing::debug!("GET /rest/");
-            let rest = db.read().unwrap();
-            let rest = rest
+            let rests = db.read().unwrap();
+            let rests: Vec<Rest> = rests
                 .values()
-                .skip(pagination.offset.unwrap_or(0))           // 跳过指定偏移量
-                .take(pagination.limit.unwrap_or(usize::MAX))   // 限制返回数量
-                .cloned()                                       // 克隆数据
-                .collect::<Vec<_>>();                           // 收集为Vec
-            Json(rest).into_response()
+                .skip(pagination.offset.unwrap_or(0))
+                .take(pagination.limit.unwrap_or(usize::MAX))
+                .cloned()
+                .collect::<Vec<_>>();
+            Json(rests).into_response()
         }
     }
-}
-#[derive(Debug, Deserialize, Default)]
-struct GetPagination {
-    /// 起始位置
-    offset: Option<usize>,
-    /// 数量限制
-    limit: Option<usize>,
 }
 
 /**
@@ -214,4 +207,19 @@ async fn rest_delete(
     } else {
         StatusCode::NOT_FOUND
     }
+}
+
+// -------- api struct -----------
+
+#[derive(Debug, Deserialize, Default)]
+struct GetPagination {
+    /// 起始位置
+    offset: Option<usize>,
+    /// 数量限制
+    limit: Option<usize>,
+}
+
+#[derive(Debug, Deserialize)]
+struct RequestType {
+    data: Option<Value>,
 }
