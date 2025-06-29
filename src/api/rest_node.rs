@@ -7,7 +7,7 @@
 //! - 均为 `Node` 的派生类 (符合Node特征)
 //! - 生命周期: 归创建者所有，删除用户则会消除属于该创建者的所有对象
 //! - 几个重要成员:
-//!   - id
+//!   - `id`
 //!   - `next_id/next_obj` / `prev_id/prev_obj` (可能是数组)
 //!   - `script` 可能是如果是脚本型 (lua/python等)，不过这需要相应的后端环境
 
@@ -39,7 +39,7 @@ pub trait Node: Send + Sync {
     fn prev_id(&self) -> Option<&str>;
 }
 
-// 基础节点结构体，实现Node trait
+/// 基础节点结构体，实现Node trait
 pub struct BasicNode {
     id: String,
     next_id: Option<String>,
@@ -58,10 +58,15 @@ impl Node for BasicNode {
     }
 }
 
-// ------------------
-
-/// 节点数据存储。`动态数组<原子计数<动态分发的trait对象，并明确该对象自身线程安全>>`
-type Db = Vec<Arc<dyn Node + Send + Sync>>;
+/// 节点数据存储。
+/// 
+/// 注意内外id需要保证一致性，这里的保证措施为id不可变
+/// 
+/// 旧
+/// ~~`动态数组<原子计数<动态分发的trait对象，并明确该对象自身线程安全>>`~~
+/// ~~type Db = Vec<Arc<dyn Node + Send + Sync>>;~~
+type Db = Arc<RwLock<HashMap<String, NodeRef>>>;
+type NodeRef = Arc<RwLock<dyn Node>>;
 
 #[derive(Debug, Deserialize)]
 struct RequestType {
@@ -70,7 +75,7 @@ struct RequestType {
 
 /// 创建 Node API 路由
 pub async fn factory_node_router() -> Router {
-    let db: Db = Vec::new(); // 节点存储
+    let db: Db = Db::default();
 
     // axum
     let app = Router::new()
@@ -95,13 +100,45 @@ async fn node_id_get(
     match id {
         // 有id，则查找特定ID项
         Some(Path(id)) => {
-            tracing::debug!("GET /rest/{}", id);
-            StatusCode::NOT_FOUND.into_response()
+            tracing::debug!("GET /node/{}", id);
+            let node = db.read().unwrap();
+            match node.get(&id) {
+                Some(node) => {
+                    let serialized_node = node.read().unwrap();
+                    let response_data = serde_json::json!({
+                        "id": serialized_node.id(),
+                        "next_id": serialized_node.next_id(),
+                        "prev_id": serialized_node.prev_id(),
+                    });
+                    Json(response_data).into_response()
+                },
+                None => {
+                    StatusCode::NOT_FOUND.into_response()
+                }
+            }
         }
         // 无id，返回所有项
         None => {
-            tracing::debug!("GET /rest/");
-            StatusCode::NOT_FOUND.into_response()
+            tracing::debug!("GET /node/");
+            let node = db.read().unwrap();
+            let node = node
+                .values()
+                .skip(pagination.offset.unwrap_or(0))           // 跳过指定偏移量
+                .take(pagination.limit.unwrap_or(usize::MAX))   // 限制返回数量
+                .cloned()                                       // 克隆数据
+                .collect::<Vec<_>>();                           // 收集为Vec
+            let serialized_nodes: Vec<_> = node
+                .iter()
+                .map(|node_ref| {
+                    let node = node_ref.read().unwrap();
+                    serde_json::json!({
+                        "id": node.id(),
+                        "next_id": node.next_id(),
+                        "prev_id": node.prev_id(),
+                    })
+                })
+                .collect();
+            Json(serialized_nodes).into_response()
         }
     }
 }

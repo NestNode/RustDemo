@@ -37,7 +37,9 @@ struct Rest {
     /// 事项内容 (可以是任意json项(object/string/...))
     data: Value,
 }
-/// 数据库。`原子计数(多线程多所有权安全)<读写锁<HashMap(内存存储)>>`
+/// 数据库
+/// 
+/// `原子计数(多线程多所有权安全)<读写锁<HashMap(内存存储)>>`
 type Db = Arc<RwLock<HashMap<String, Rest>>>;
 
 #[derive(Debug, Deserialize)]
