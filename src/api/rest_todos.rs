@@ -45,7 +45,7 @@ pub async fn factory_todos_router() -> Router {
 
     // axum
     let app = Router::new()
-        .route("/todos", get(todos_id_get).post(todos_id_post))
+        .route("/todos", get(todos_id_get).put(todos_id_put).post(todos_id_post))
         .route("/todos/{id}", get(todos_id_get).put(todos_id_put).post(todos_id_post).patch(todos_id_patch).delete(todos_id_delete))
         .with_state(data); // 注入共享状态（数据库）
     app
@@ -173,20 +173,22 @@ async fn todos_id_patch(
     Path(id): Path<String>,
     State(data): State<ItemContainer>,
     Json(input): Json<RequestType>,
-) -> Result<impl IntoResponse, StatusCode> {
+) -> impl IntoResponse {
     tracing::debug!("PATCH /{}{}", API_ROOT_STR, id);
 
-    let _old_value = data.get_by_id(&id).ok_or(StatusCode::NOT_FOUND)?;
+    let old_value = data.get_by_id(&id);
+    if old_value.is_none() {
+        return StatusCode::NOT_FOUND.into_response()
+    };
 
-    let new_value_text = input.text.ok_or(StatusCode::BAD_REQUEST)?;
-    let new_value_completed = input.completed.ok_or(StatusCode::BAD_REQUEST)?;
-
-    data.put_by_id(&id, Item {
+    let new_value = Item {
         id: id.clone(),
-        text: new_value_text,
-        completed: new_value_completed,
-    });
-    Ok(StatusCode::OK)
+        text: input.text.unwrap_or(String::default()),
+        completed: input.completed.unwrap_or(false)
+    };
+
+    data.put_by_id(&id, new_value.clone());
+    Json(new_value).into_response()
 }
 
 /**
@@ -203,7 +205,7 @@ async fn todos_id_delete (
 
     let result = data.delete_by_id(&id);
     match result {
-        Some(result) => Json(result).into_response(),
+        Some(_) => StatusCode::NO_CONTENT.into_response(),
         None => StatusCode::NOT_FOUND.into_response(),
     }
 }

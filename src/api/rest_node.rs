@@ -43,7 +43,7 @@ trait Node: Send + Sync {
             Some(value) => {
                 BasicNode {
                     id: id.to_string(),
-                    content: value.to_string(),
+                    content: value,
                     next_id: None,
                     prev_id: None,
                 }
@@ -51,7 +51,7 @@ trait Node: Send + Sync {
             None => {
                 BasicNode {
                     id: id.to_string(),
-                    content: String::new(),
+                    content: Value::default(),
                     next_id: None,
                     prev_id: None,
                 }
@@ -87,7 +87,7 @@ trait Node: Send + Sync {
 #[derive(Debug, Serialize, Clone)]
 struct BasicNode {
     id: String,
-    content: String, // type(预设)/运行脚本，或指向对应的对象
+    content: Value, // type(预设)/运行脚本，或指向对应的对象
     next_id: Option<String>,
     prev_id: Option<String>,
 }
@@ -111,8 +111,8 @@ pub async fn factory_node_router() -> Router {
 
     // axum
     let app = Router::new()
-        .route("/node", get(node_id_get).post(node_id_post))
-        .route("/node/{id}", get(node_id_get).put(node_id_put).post(node_id_post).patch(node_patch).delete(node_delete))
+        .route("/node", get(node_id_get).put(node_id_put).post(node_id_post))
+        .route("/node/{id}", get(node_id_get).put(node_id_put).post(node_id_post).patch(node_id_patch).delete(node_id_delete))
         .with_state(data); // 注入共享状态（节点存储）
     app
 }
@@ -224,17 +224,20 @@ async fn node_id_post(
  * - `db` 共享数据库状态
  * - `input` JSON请求体
  */
-async fn node_patch(
+async fn node_id_patch(
     Path(id): Path<String>,
     State(data): State<ItemContainer>,
     Json(input): Json<RequestType>,
-) -> Result<impl IntoResponse, StatusCode> {
+) -> impl IntoResponse {
     tracing::debug!("PATCH /{}{}", API_ROOT_STR, id);
 
-    let _old_value = data.get_by_id(&id).ok_or(StatusCode::NOT_FOUND)?;
+    let old_value = data.get_by_id(&id);
+    if old_value.is_none() {
+        return StatusCode::NOT_FOUND.into_response()
+    };
 
-    Item::factory_put(data, &id, input.data);
-    Ok(StatusCode::OK)
+    let new_value = Item::factory_put(data, &id, input.data);
+    Json(new_value).into_response()
 }
 
 /**
@@ -243,7 +246,7 @@ async fn node_patch(
  * - `id` 路径中的ID
  * - `db` 共享数据库状态
  */
-async fn node_delete(
+async fn node_id_delete(
     Path(id): Path<String>,           
     State(data): State<ItemContainer>,        
 ) -> impl IntoResponse {
@@ -251,7 +254,7 @@ async fn node_delete(
 
     let result = data.delete_by_id(&id);
     match result {
-        Some(result) => Json(result).into_response(),
+        Some(_) => StatusCode::NO_CONTENT.into_response(),
         None => StatusCode::NOT_FOUND.into_response(),
     }
 }

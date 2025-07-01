@@ -47,8 +47,8 @@ pub async fn factory_rest_router() -> Router {
 
     // axum
     let app = Router::new()
-        .route("/rest", get(rest_id_get).post(rest_id_post))
-        .route("/rest/{id}", get(rest_id_get).put(rest_id_put).post(rest_id_post).patch(rest_patch).delete(rest_delete))
+        .route("/rest", get(rest_id_get).put(rest_id_put).post(rest_id_post))
+        .route("/rest/{id}", get(rest_id_get).put(rest_id_put).post(rest_id_post).patch(rest_id_patch).delete(rest_id_delete))
         .with_state(data); // 注入共享状态（数据库）
     app
 }
@@ -169,22 +169,25 @@ async fn rest_id_post(
  * - `db` 共享数据库状态
  * - `input` JSON请求体
  */
-async fn rest_patch(
+async fn rest_id_patch(
     Path(id): Path<String>,
     State(data): State<ItemContainer>,
     Json(input): Json<RequestType>,
-) -> Result<impl IntoResponse, StatusCode> {
+) -> impl IntoResponse {
     tracing::debug!("PATCH /{}{}", API_ROOT_STR, id);
 
-    let _old_value = data.get_by_id(&id).ok_or(StatusCode::NOT_FOUND)?;
+    let old_value = data.get_by_id(&id);
+    if old_value.is_none() {
+        return StatusCode::NOT_FOUND.into_response()
+    };
 
-    let new_value = input.data.ok_or(StatusCode::BAD_REQUEST)?;
-
-    data.put_by_id(&id, Item {
+    let new_value = Item {
         id: id.clone(),
-        data: new_value
-    });
-    Ok(StatusCode::OK)
+        data: input.data.unwrap_or(Value::default())
+    };
+
+    data.put_by_id(&id, new_value.clone());
+    Json(new_value).into_response()
 }
 
 /**
@@ -193,7 +196,7 @@ async fn rest_patch(
  * - `id` 路径中的ID
  * - `db` 共享数据库状态
  */
-async fn rest_delete(
+async fn rest_id_delete(
     Path(id): Path<String>,           
     State(data): State<ItemContainer>,        
 ) -> impl IntoResponse {
@@ -201,7 +204,7 @@ async fn rest_delete(
 
     let result = data.delete_by_id(&id);
     match result {
-        Some(result) => Json(result).into_response(),
+        Some(_) => StatusCode::NO_CONTENT.into_response(),
         None => StatusCode::NOT_FOUND.into_response(),
     }
 }
