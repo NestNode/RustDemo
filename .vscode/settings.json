@@ -8,12 +8,6 @@
             "foldStart": "// #region [NAME]",
             "foldStartRegex": "^[\\s]*//[\\s]*#region[\\s]*(.*)[\\s]*$|^[\\s]*/\\*[\\s]*#region[\\s]*(.*)[\\s]*\\*/[\\s]*$"
         },
-        "[cpp]": {
-            "foldEnd": "// #endregion",
-            "foldEndRegex": "//[\\s]*#endregion|/\\*[\\s]*#endregion",
-            "foldStart": "// #region [NAME]",
-            "foldStartRegex": "^[\\s]*//[\\s]*#region[\\s]*(.*)[\\s]*$|^[\\s]*/\\*[\\s]*#region[\\s]*(.*)[\\s]*\\*/[\\s]*$"
-        },
     },
 
     "regionHighlighter.defaultTheme": "Custom Theme",

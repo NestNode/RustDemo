@@ -1,4 +1,4 @@
-//! 管理待办事项(Todos)的 RESTful API
+//! 管理待办事项 (Todos) 的 RESTful API
 //!
 //! API接口设计：
 //!
@@ -16,41 +16,38 @@ use axum::{
     Json, Router,                       // JSON处理、路由器
 };
 use serde::{Deserialize, Serialize};    // JSON序列化/反序列化
-use std::{                              // 标准库
-    collections::HashMap,               // 内存存储数据结构
-    sync::{Arc, RwLock},                // 线程安全共享指针和读写锁
-    // time::Duration,                  // 超时时间设置
-};
+use std::sync::Arc;                     // 线程安全共享指针
 use uuid::Uuid;                         // 生成唯一ID
-// use tower::{BoxError, ServiceBuilder}; // 中间件构建工具
-// use tower_http::trace::TraceLayer;   // HTTP请求追踪
 
-// #region TODOS 相关类型
+use crate::container::rest_store::Container;
 
-/// 待办事项数据结构
+// #region 相关类型
+
+/// 存储项 (待办事项)
+/// - `id` 唯一标识符 (uuid或其他字符串，一般前者配合hashmap会更好，字符串长度应限制?)
+/// - `data` 事项内容
+/// - `completed` 完成状态
 #[derive(Debug, Serialize, Clone)]
-struct Todo {
-    /// 唯一标识符 (uuid或其他字符串，一般前者配合hashmap会更好，字符串长度应限制?)
+struct Item {
     id: String,
-    /// 事项内容
     text: String,
-    /// 完成状态
     completed: bool,
 }
-/// 数据库。`原子计数(多线程多所有权安全)<读写锁<HashMap(内存存储)>>`
-type Db = Arc<RwLock<HashMap<String, Todo>>>;
+type ItemContainer = Arc<Container<Item>>;
+
+const API_ROOT_STR: &str = "todos/";
 
 // #endregion
 
 /// 创建 RESTful API 路由
 pub async fn factory_todos_router() -> Router {
-    let db = Db::default();
+    let data = Container::<Item>::new_arc();
 
     // axum
     let app = Router::new()
         .route("/todos", get(todos_id_get).post(todos_id_post))
         .route("/todos/{id}", get(todos_id_get).put(todos_id_put).post(todos_id_post).patch(todos_id_patch).delete(todos_id_delete))
-        .with_state(db); // 注入共享状态（数据库）
+        .with_state(data); // 注入共享状态（数据库）
     app
 }
 
@@ -64,33 +61,28 @@ pub async fn factory_todos_router() -> Router {
 async fn todos_id_get(
     id: Option<Path<String>>,
     pagination: Query<GetPagination>, 
-    State(db): State<Db>
+    State(data): State<ItemContainer>
 ) -> impl IntoResponse {
     match id {
         // 有id，则查找特定ID项
         Some(Path(id)) => {
-            tracing::debug!("GET /todos/{}", id);
-            let todos = db.read().unwrap();
-            match todos.get(&id) {
-                Some(todo) => {
-                    Json(todo.clone()).into_response()
-                },
-                None => {
-                    StatusCode::NOT_FOUND.into_response()
-                }
-            }
+            tracing::debug!("GET /{}{}", API_ROOT_STR, id); // TODO 用统一的中间件来处理
+            data.get_by_id(&id)
+                .map_or_else(
+                    || StatusCode::NOT_FOUND.into_response(),
+                    |result| Json(result.clone()).into_response()
+                )
         }
         // 无id，返回所有项
         None => {
-            tracing::debug!("GET /todos/");
-            let todos = db.read().unwrap();
-            let todos = todos
+            tracing::debug!("GET /{}", API_ROOT_STR);
+            let result: Vec<Item> = data.get_all()
                 .values()
-                .skip(pagination.offset.unwrap_or(0))           // 跳过指定偏移量
-                .take(pagination.limit.unwrap_or(usize::MAX))   // 限制返回数量
-                .cloned()                                       // 克隆数据
-                .collect::<Vec<_>>();                           // 收集为Vec
-            Json(todos).into_response()
+                .skip(pagination.offset.unwrap_or(0))
+                .take(pagination.limit.unwrap_or(usize::MAX))
+                .cloned()
+                .collect::<Vec<_>>();
+            Json(result).into_response()
         }
     }
 }
@@ -104,20 +96,30 @@ async fn todos_id_get(
  */
 async fn todos_id_put(
     id: Option<Path<String>>,
-    State(db): State<Db>,
-    Json(input): Json<RequestType>
+    State(data): State<ItemContainer>,
+    Json(input): Json<RequestType>,
 ) -> impl IntoResponse {
-    let id = id.map(|p| p.0).unwrap_or_else(|| Uuid::new_v4().to_string());
-    tracing::debug!("PUT /todos/{}", id);
+    let id = id
+        .map_or_else(
+            || {
+                let id = Uuid::new_v4().to_string();
+                tracing::debug!("PUT /{}, create id:{}", API_ROOT_STR, id);
+                id
+            },
+            |p| {
+                tracing::debug!("PUT /{}{}", API_ROOT_STR, p.0);
+                p.0
+            }
+        );
 
-    let todo = Todo {
-        id: id,
-        text: input.text.unwrap_or_else(String::new),
+    let item = Item {
+        id: id.clone(),
+        text: input.text.unwrap_or(String::new()),
         completed: input.completed.unwrap_or(false),
     };
-    db.write().unwrap().insert(todo.id.clone(), todo.clone());
-
-    (StatusCode::CREATED, Json(todo))
+    
+    data.put_by_id(&id, item.clone());
+    (StatusCode::CREATED, Json(item))
 }
 
 /**
@@ -129,33 +131,35 @@ async fn todos_id_put(
  */
 async fn todos_id_post(
     id: Option<Path<String>>,
-    State(db): State<Db>,
-    Json(input): Json<RequestType>
+    State(data): State<ItemContainer>,
+    Json(input): Json<RequestType>,
 ) -> impl IntoResponse {
-    let id = id.map(|p| p.0).unwrap_or_else(|| Uuid::new_v4().to_string());
-    tracing::debug!("POST /todo/{}", id);
+    let id = id
+        .map_or_else(
+            || {
+                let id = Uuid::new_v4().to_string();
+                tracing::debug!("POST /{}, create id:{}", API_ROOT_STR, id);
+                id
+            },
+            |p| {
+                tracing::debug!("POST /{}{}", API_ROOT_STR, p.0);
+                p.0
+            }
+        );
 
-    let todo = db
-        .read()
-        .unwrap()
-        .get(&id)
-        .cloned();
-
-    match todo {
-        Some(todo) => {
-            (StatusCode::CONFLICT, Json(todo))
-        },
-        None => {
-            let todo = Todo {
-                id: id,
-                text: input.text.unwrap_or_else(String::new),
-                completed: input.completed.unwrap_or(false),
-            };
-            db.write().unwrap().insert(todo.id.clone(), todo.clone());
-        
-            (StatusCode::CREATED, Json(todo))
-        }
-    }
+    data.get_by_id(&id)
+        .map_or_else(
+            || {
+                let item = Item {
+                    id: id.clone(),
+                    text: input.text.unwrap_or(String::new()),
+                    completed: input.completed.unwrap_or(false),
+                };
+                data.put_by_id(&id, item.clone());
+                (StatusCode::CREATED, Json(item))
+            },
+            |result| (StatusCode::CONFLICT, Json(result))
+        )
 }
 
 /**
@@ -167,27 +171,22 @@ async fn todos_id_post(
  */
 async fn todos_id_patch(
     Path(id): Path<String>,
-    State(db): State<Db>,
-    Json(input): Json<RequestType>
+    State(data): State<ItemContainer>,
+    Json(input): Json<RequestType>,
 ) -> Result<impl IntoResponse, StatusCode> {
-    tracing::debug!("PATCH /todos/{}", id);
+    tracing::debug!("PATCH /{}{}", API_ROOT_STR, id);
 
-    let mut todo = db
-        .read()
-        .unwrap()
-        .get(&id)
-        .cloned() // 克隆数据
-        .ok_or(StatusCode::NOT_FOUND)?;
+    let _old_value = data.get_by_id(&id).ok_or(StatusCode::NOT_FOUND)?;
 
-    if let Some(text) = input.text {
-        todo.text = text;
-    }
-    if let Some(completed) = input.completed {
-        todo.completed = completed;
-    }
-    db.write().unwrap().insert(todo.id.clone(), todo.clone());
+    let new_value_text = input.text.ok_or(StatusCode::BAD_REQUEST)?;
+    let new_value_completed = input.completed.ok_or(StatusCode::BAD_REQUEST)?;
 
-    Ok(Json(todo))
+    data.put_by_id(&id, Item {
+        id: id.clone(),
+        text: new_value_text,
+        completed: new_value_completed,
+    });
+    Ok(StatusCode::OK)
 }
 
 /**
@@ -197,19 +196,19 @@ async fn todos_id_patch(
  * - `db` 共享数据库状态
  */
 async fn todos_id_delete (
-    Path(id): Path<String>,
-    State(db): State<Db>
+    Path(id): Path<String>,           
+    State(data): State<ItemContainer>,
 ) -> impl IntoResponse {
-    tracing::debug!("DELETE /todos/{}", id);
+    tracing::debug!("DELETE /{}{}", API_ROOT_STR, id);
 
-    if db.write().unwrap().remove(&id).is_some() {
-        StatusCode::NO_CONTENT
-    } else {
-        StatusCode::NOT_FOUND
+    let result = data.delete_by_id(&id);
+    match result {
+        Some(result) => Json(result).into_response(),
+        None => StatusCode::NOT_FOUND.into_response(),
     }
 }
 
-// -------- api struct -----------
+// #region api struct
 
 #[derive(Debug, Deserialize, Default)]
 struct GetPagination {
@@ -224,3 +223,5 @@ struct RequestType {
     text: Option<String>,
     completed: Option<bool>,
 }
+
+// #endregion

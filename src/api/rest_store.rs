@@ -20,42 +20,36 @@ use axum::{
 };
 use serde::{Deserialize, Serialize};    // JSON序列化/反序列化
 use serde_json::Value;                  // 支持任意JSON数据
-use std::{                              // 标准库
-    collections::HashMap,               // 内存存储数据结构
-    sync::{Arc, RwLock},                // 线程安全共享指针和读写锁
-    // time::Duration,                  // 超时时间设置
-};
+use std::sync::Arc;                     // 线程安全共享指针
 use uuid::Uuid;                         // 生成唯一ID
-// use tower::{BoxError, ServiceBuilder}; // 中间件构建工具
-// use tower_http::trace::TraceLayer;   // HTTP请求追踪
 
-// #region 存储项相关类型
+use crate::container::rest_store::Container;
 
-/// 存储项数据结构
+// #region 相关类型
+
+/// 存储项
+/// - `id` 唯一标识符 (uuid或其他字符串，一般前者配合hashmap会更好，字符串长度应限制?)
+/// - `data` 事项内容 (可以是任意json项(object/string/...))
 #[derive(Debug, Serialize, Clone)]
-struct Rest {
-    /// 唯一标识符 (uuid或其他字符串，一般前者配合hashmap会更好，字符串长度应限制?)
+struct Item {
     id: String,
-    /// 事项内容 (可以是任意json项(object/string/...))
     data: Value,
 }
+type ItemContainer = Arc<Container<Item>>;
 
-/// 数据库
-/// 
-/// `原子计数(多线程多所有权安全)<读写锁<HashMap(内存存储)>>`
-type Db = Arc<RwLock<HashMap<String, Rest>>>;
+const API_ROOT_STR: &str = "rest/";
 
 // #endregion
 
 /// 创建 RESTful API 路由
 pub async fn factory_rest_router() -> Router {
-    let db = Db::default(); // 键值存储
+    let data = Container::<Item>::new_arc();
 
     // axum
     let app = Router::new()
         .route("/rest", get(rest_id_get).post(rest_id_post))
         .route("/rest/{id}", get(rest_id_get).put(rest_id_put).post(rest_id_post).patch(rest_patch).delete(rest_delete))
-        .with_state(db); // 注入共享状态（数据库）
+        .with_state(data); // 注入共享状态（数据库）
     app
 }
 
@@ -69,33 +63,28 @@ pub async fn factory_rest_router() -> Router {
 async fn rest_id_get(
     id: Option<Path<String>>,
     pagination: Query<GetPagination>,
-    State(db): State<Db>
+    State(data): State<ItemContainer>,
 ) -> impl IntoResponse {
     match id {
         // 有id，则查找特定ID项
         Some(Path(id)) => {
-            tracing::debug!("GET /rest/{}", id);
-            let rests = db.read().unwrap();
-            match rests.get(&id) {
-                Some(rest) => {
-                    Json(rest.clone()).into_response()
-                },
-                None => {
-                    StatusCode::NOT_FOUND.into_response()
-                }
-            }
+            tracing::debug!("GET /{}{}", API_ROOT_STR, id); // TODO 用统一的中间件来处理
+            data.get_by_id(&id)
+                .map_or_else(
+                    || StatusCode::NOT_FOUND.into_response(),
+                    |result| Json(result.clone()).into_response()
+                )
         }
         // 无id，返回所有项
         None => {
-            tracing::debug!("GET /rest/");
-            let rests = db.read().unwrap();
-            let rests: Vec<Rest> = rests
+            tracing::debug!("GET /{}", API_ROOT_STR);
+            let result: Vec<Item> = data.get_all()
                 .values()
                 .skip(pagination.offset.unwrap_or(0))
                 .take(pagination.limit.unwrap_or(usize::MAX))
                 .cloned()
                 .collect::<Vec<_>>();
-            Json(rests).into_response()
+            Json(result).into_response()
         }
     }
 }
@@ -109,19 +98,29 @@ async fn rest_id_get(
  */
 async fn rest_id_put(
     id: Option<Path<String>>,
-    State(db): State<Db>,
-    Json(input): Json<RequestType>
+    State(data): State<ItemContainer>,
+    Json(input): Json<RequestType>,
 ) -> impl IntoResponse {
-    let id = id.map(|p| p.0).unwrap_or_else(|| Uuid::new_v4().to_string());
-    tracing::debug!("PUT /rest/{}", id);
+    let id = id
+        .map_or_else(
+            || {
+                let id = Uuid::new_v4().to_string();
+                tracing::debug!("PUT /{}, create id:{}", API_ROOT_STR, id);
+                id
+            },
+            |p| {
+                tracing::debug!("PUT /{}{}", API_ROOT_STR, p.0);
+                p.0
+            }
+        );
 
-    let rest = Rest {
-        id: id,
+    let item = Item {
+        id: id.clone(),
         data: input.data.unwrap_or(Value::Null),
     };
-    db.write().unwrap().insert(rest.id.clone(), rest.clone());
-
-    (StatusCode::CREATED, Json(rest))
+    
+    data.put_by_id(&id, item.clone());
+    (StatusCode::CREATED, Json(item))
 }
 
 /**
@@ -133,32 +132,34 @@ async fn rest_id_put(
  */
 async fn rest_id_post(
     id: Option<Path<String>>,
-    State(db): State<Db>,
-    Json(input): Json<RequestType>
+    State(data): State<ItemContainer>,
+    Json(input): Json<RequestType>,
 ) -> impl IntoResponse {
-    let id = id.map(|p| p.0).unwrap_or_else(|| Uuid::new_v4().to_string());
-    tracing::debug!("POST /rest/{}", id);
+    let id = id
+        .map_or_else(
+            || {
+                let id = Uuid::new_v4().to_string();
+                tracing::debug!("POST /{}, create id:{}", API_ROOT_STR, id);
+                id
+            },
+            |p| {
+                tracing::debug!("POST /{}{}", API_ROOT_STR, p.0);
+                p.0
+            }
+        );
 
-    let rest = db
-        .read()
-        .unwrap()
-        .get(&id)
-        .cloned();
-
-    match rest {
-        Some(rest) => {
-            (StatusCode::CONFLICT, Json(rest))
-        },
-        None => {
-            let rest = Rest {
-                id: id,
-                data: input.data.unwrap_or(Value::Null),
-            };
-            db.write().unwrap().insert(rest.id.clone(), rest.clone());
-        
-            (StatusCode::CREATED, Json(rest))
-        }
-    }
+    data.get_by_id(&id)
+        .map_or_else(
+            || {
+                let item = Item {
+                    id: id.clone(),
+                    data: input.data.unwrap_or(Value::Null),
+                };
+                data.put_by_id(&id, item.clone());
+                (StatusCode::CREATED, Json(item))
+            },
+            |result| (StatusCode::CONFLICT, Json(result))
+        )
 }
 
 /**
@@ -170,24 +171,20 @@ async fn rest_id_post(
  */
 async fn rest_patch(
     Path(id): Path<String>,
-    State(db): State<Db>,
-    Json(input): Json<RequestType>
+    State(data): State<ItemContainer>,
+    Json(input): Json<RequestType>,
 ) -> Result<impl IntoResponse, StatusCode> {
-    tracing::debug!("PATCH /rest/{}", id);
+    tracing::debug!("PATCH /{}{}", API_ROOT_STR, id);
 
-    let mut rest = db
-        .read()
-        .unwrap()
-        .get(&id)
-        .cloned() // 克隆数据
-        .ok_or(StatusCode::NOT_FOUND)?;
+    let _old_value = data.get_by_id(&id).ok_or(StatusCode::NOT_FOUND)?;
 
-    if let Some(val) = input.data {
-        rest.data = val;
-    }
-    db.write().unwrap().insert(rest.id.clone(), rest.clone());
+    let new_value = input.data.ok_or(StatusCode::BAD_REQUEST)?;
 
-    Ok(Json(rest))
+    data.put_by_id(&id, Item {
+        id: id.clone(),
+        data: new_value
+    });
+    Ok(StatusCode::OK)
 }
 
 /**
@@ -198,18 +195,18 @@ async fn rest_patch(
  */
 async fn rest_delete(
     Path(id): Path<String>,           
-    State(db): State<Db>            
+    State(data): State<ItemContainer>,        
 ) -> impl IntoResponse {
-    tracing::debug!("DELETE /rest/{}", id);
+    tracing::debug!("DELETE /{}{}", API_ROOT_STR, id);
 
-    if db.write().unwrap().remove(&id).is_some() {
-        StatusCode::NO_CONTENT
-    } else {
-        StatusCode::NOT_FOUND
+    let result = data.delete_by_id(&id);
+    match result {
+        Some(result) => Json(result).into_response(),
+        None => StatusCode::NOT_FOUND.into_response(),
     }
 }
 
-// -------- api struct -----------
+// #region api struct
 
 #[derive(Debug, Deserialize, Default)]
 struct GetPagination {
@@ -223,3 +220,5 @@ struct GetPagination {
 struct RequestType {
     data: Option<Value>,
 }
+
+// #endregion

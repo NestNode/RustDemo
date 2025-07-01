@@ -52,3 +52,5 @@ cargo doc
 # cargo doc --no-deps # 或不要生成第三方依赖的文档
 # cargo doc --open # 或生成后直接打开
 ```
+
+## 命名

@@ -21,66 +21,99 @@ use axum::{
 };
 use serde::{Deserialize, Serialize};    // JSON序列化/反序列化
 use serde_json::Value;                  // 支持任意JSON数据
-use std::{                              // 标准库
-    collections::HashMap,               // 内存存储数据结构
-    sync::{Arc, RwLock},                // 线程安全共享指针和读写锁
-    // time::Duration,                  // 超时时间设置
-};
+use std::sync::Arc;                     // 线程安全共享指针
 use uuid::Uuid;                         // 生成唯一ID
-// use tower::{BoxError, ServiceBuilder}; // 中间件构建工具
-// use tower_http::trace::TraceLayer;   // HTTP请求追踪
+
+use crate::container::rest_store::Container;
 
 // #region Node相关类型
 
 /// Node特征
 /// 
 /// 必须实现线程安全约束
-pub trait Node: Send + Sync {
-    fn id(&self) -> &str;
-    fn next_id(&self) -> Option<&str>;
-    fn prev_id(&self) -> Option<&str>;
+trait Node: Send + Sync {
+    /// 依次执行脚本 (执行自身，并自动调动下一个节点)
+    fn _run(&self) -> bool;
+
+    /// 创建Node的派生类
+    /// 
+    /// - 自动分发类型
+    fn factory(id: &str, data: Option<Value>) -> BasicNode {
+        match data {
+            Some(value) => {
+                BasicNode {
+                    id: id.to_string(),
+                    content: value.to_string(),
+                    next_id: None,
+                    prev_id: None,
+                }
+            },
+            None => {
+                BasicNode {
+                    id: id.to_string(),
+                    content: String::new(),
+                    next_id: None,
+                    prev_id: None,
+                }
+            }
+        }
+    }
+
+    /// factory() 的自动管理容器的版本
+    fn factory_put(container:ItemContainer, id: &str, data: Option<Value>) -> BasicNode {
+        let new_value = Item::factory(&id, data);
+
+        container.put_by_id(&id, new_value.clone());
+        new_value
+    }
+
+    /// factory() 的自动管理容器的版本
+    fn factory_post(container:ItemContainer, id: &str, data: Option<Value>) -> (bool, BasicNode) {
+        let old_value = container.get_by_id(&id);
+        if let Some(value) = old_value {
+            return (false, value);
+        }
+
+        let new_value = Item::factory(&id, data);
+
+        container.put_by_id(&id, new_value.clone());
+        (true, new_value)
+    }
 }
 
 /// 基础节点结构体，实现Node trait
-pub struct BasicNode {
+/// 
+/// 存储项
+#[derive(Debug, Serialize, Clone)]
+struct BasicNode {
     id: String,
+    content: String, // type(预设)/运行脚本，或指向对应的对象
     next_id: Option<String>,
     prev_id: Option<String>,
 }
 
 impl Node for BasicNode {
-    fn id(&self) -> &str {
-        &self.id
-    }
-    fn next_id(&self) -> Option<&str> {
-        self.next_id.as_deref()
-    }
-    fn prev_id(&self) -> Option<&str> {
-        self.prev_id.as_deref()
+    fn _run(&self) -> bool {
+        false
     }
 }
 
-/// 节点数据存储。
-/// 
-/// 注意内外id需要保证一致性，这里的保证措施为id不可变
-/// 
-/// 旧
-/// ~~`动态数组<原子计数<动态分发的trait对象，并明确该对象自身线程安全>>`~~
-/// ~~type Db = Vec<Arc<dyn Node + Send + Sync>>;~~
-type Db = Arc<RwLock<HashMap<String, NodeRef>>>;
-type NodeRef = Arc<RwLock<dyn Node>>;
+type Item = BasicNode;
+type ItemContainer = Arc<Container<Item>>;
+
+const API_ROOT_STR: &str = "node/";
 
 // #endregion
 
 /// 创建 Node API 路由
 pub async fn factory_node_router() -> Router {
-    let db: Db = Db::default();
+    let data = Container::<Item>::new_arc();
 
     // axum
     let app = Router::new()
         .route("/node", get(node_id_get).post(node_id_post))
         .route("/node/{id}", get(node_id_get).put(node_id_put).post(node_id_post).patch(node_patch).delete(node_delete))
-        .with_state(db); // 注入共享状态（节点存储）
+        .with_state(data); // 注入共享状态（节点存储）
     app
 }
 
@@ -96,50 +129,28 @@ pub async fn factory_node_router() -> Router {
 async fn node_id_get(
     id: Option<Path<String>>,
     pagination: Query<GetPagination>,
-    State(db): State<Db>
+    State(data): State<ItemContainer>,
 ) -> impl IntoResponse {
     match id {
         // 有id，则查找特定ID项
         Some(Path(id)) => {
-            tracing::debug!("GET /node/{}", id);
-            let nodes = db.read().unwrap();
-            match nodes.get(&id) {
-                Some(node) => {
-                    let node = node.read().unwrap();
-                    let node = serde_json::json!({
-                        "id": node.id(),
-                        "next_id": node.next_id(),
-                        "prev_id": node.prev_id(),
-                    });
-                    Json(node).into_response()
-                },
-                None => {
-                    StatusCode::NOT_FOUND.into_response()
-                }
-            }
+            tracing::debug!("GET /{}{}", API_ROOT_STR, id); // TODO 用统一的中间件来处理
+            data.get_by_id(&id)
+                .map_or_else(
+                    || StatusCode::NOT_FOUND.into_response(),
+                    |result| Json(result.clone()).into_response()
+                )
         }
         // 无id，返回所有项
         None => {
-            tracing::debug!("GET /node/");
-            let nodes = db.read().unwrap();
-            let nodes: Vec<NodeRef> = nodes
+            tracing::debug!("GET /{}", API_ROOT_STR);
+            let result: Vec<Item> = data.get_all()
                 .values()
                 .skip(pagination.offset.unwrap_or(0))
                 .take(pagination.limit.unwrap_or(usize::MAX))
                 .cloned()
                 .collect::<Vec<_>>();
-            let nodes: Vec<_> = nodes
-                .iter()
-                .map(|node| {
-                    let node = node.read().unwrap();
-                    serde_json::json!({
-                        "id": node.id(),
-                        "next_id": node.next_id(),
-                        "prev_id": node.prev_id(),
-                    })
-                })
-                .collect();
-            Json(nodes).into_response()
+            Json(result).into_response()
         }
     }
 }
@@ -153,15 +164,24 @@ async fn node_id_get(
  */
 async fn node_id_put(
     id: Option<Path<String>>,
-    State(db): State<Db>,
-    Json(input): Json<RequestType>
+    State(data): State<ItemContainer>,
+    Json(input): Json<RequestType>,
 ) -> impl IntoResponse {
-    let id = id.map(|p| p.0).unwrap_or_else(|| Uuid::new_v4().to_string());
-    tracing::debug!("PUT /rest/{}", id);
+    let id = id
+        .map_or_else(
+            || {
+                let id = Uuid::new_v4().to_string();
+                tracing::debug!("PUT /{}, create id:{}", API_ROOT_STR, id);
+                id
+            },
+            |p| {
+                tracing::debug!("PUT /{}{}", API_ROOT_STR, p.0);
+                p.0
+            }
+        );
 
-    // 
-
-    StatusCode::NOT_FOUND.into_response()
+    let item = Item::factory_put(data, &id, input.data);
+    (StatusCode::CREATED, Json(item.clone()))
 }
 
 /**
@@ -173,13 +193,28 @@ async fn node_id_put(
  */
 async fn node_id_post(
     id: Option<Path<String>>,
-    State(db): State<Db>,
+    State(data): State<ItemContainer>,
     Json(input): Json<RequestType>
 ) -> impl IntoResponse {
-    let id = id.map(|p| p.0).unwrap_or_else(|| Uuid::new_v4().to_string());
-    tracing::debug!("POST /node/{}", id);
+    let id = id
+        .map_or_else(
+            || {
+                let id = Uuid::new_v4().to_string();
+                tracing::debug!("POST /{}, create id:{}", API_ROOT_STR, id);
+                id
+            },
+            |p| {
+                tracing::debug!("POST /{}{}", API_ROOT_STR, p.0);
+                p.0
+            }
+        );
 
-    StatusCode::NOT_FOUND.into_response()
+    let item = Item::factory_post(data, &id, input.data);
+    if item.0 == false {
+        (StatusCode::CONFLICT, Json(item.1.clone()))
+    } else {
+        (StatusCode::CREATED, Json(item.1.clone()))
+    }
 }
 
 /**
@@ -191,12 +226,15 @@ async fn node_id_post(
  */
 async fn node_patch(
     Path(id): Path<String>,
-    State(db): State<Db>,
-    Json(input): Json<RequestType>
-) -> impl IntoResponse {
-    tracing::debug!("PATCH /node/{}", id);
+    State(data): State<ItemContainer>,
+    Json(input): Json<RequestType>,
+) -> Result<impl IntoResponse, StatusCode> {
+    tracing::debug!("PATCH /{}{}", API_ROOT_STR, id);
 
-    StatusCode::NOT_FOUND.into_response()
+    let _old_value = data.get_by_id(&id).ok_or(StatusCode::NOT_FOUND)?;
+
+    Item::factory_put(data, &id, input.data);
+    Ok(StatusCode::OK)
 }
 
 /**
@@ -207,14 +245,18 @@ async fn node_patch(
  */
 async fn node_delete(
     Path(id): Path<String>,           
-    State(db): State<Db>            
+    State(data): State<ItemContainer>,        
 ) -> impl IntoResponse {
-    tracing::debug!("DELETE /node/{}", id);
+    tracing::debug!("DELETE /{}{}", API_ROOT_STR, id);
 
-    StatusCode::NOT_FOUND.into_response()
+    let result = data.delete_by_id(&id);
+    match result {
+        Some(result) => Json(result).into_response(),
+        None => StatusCode::NOT_FOUND.into_response(),
+    }
 }
 
-// -------- api struct -----------
+// #region api struct
 
 #[derive(Debug, Deserialize, Default)]
 struct GetPagination {
