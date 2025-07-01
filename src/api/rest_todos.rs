@@ -45,7 +45,7 @@ pub async fn factory_todos_router() -> Router {
 
     // axum
     let app = Router::new()
-        .route("/todos", get(todos_id_get).put(todos_id_put).post(todos_id_post))
+        .route("/todos", get(todos_id_get).put(todos_id_put).post(todos_id_post).delete(todos_id_delete))
         .route("/todos/{id}", get(todos_id_get).put(todos_id_put).post(todos_id_post).patch(todos_id_patch).delete(todos_id_delete))
         .with_state(data); // 注入共享状态（数据库）
     app
@@ -198,10 +198,17 @@ async fn todos_id_patch(
  * - `db` 共享数据库状态
  */
 async fn todos_id_delete (
-    Path(id): Path<String>,           
+    id: Option<Path<String>>,
     State(data): State<ItemContainer>,
 ) -> impl IntoResponse {
-    tracing::debug!("DELETE /{}{}", API_ROOT_STR, id);
+    let id = if let Some(id) = id {
+        tracing::debug!("DELETE /{}{}", API_ROOT_STR, id.0);
+        id.0
+    } else {
+        tracing::warn!("DELETE /{}, clearing is a high-risk operation", API_ROOT_STR);
+        // data._delete_all();
+        return StatusCode::FORBIDDEN.into_response();
+    };
 
     let result = data.delete_by_id(&id);
     match result {
