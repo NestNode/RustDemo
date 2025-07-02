@@ -22,6 +22,8 @@ use std::{
 use std::collections::hash_map::DefaultHasher;
 use std::hash::{Hash, Hasher};
 
+use crate::node::utils::NODE_LIST;
+
 /// 工具路由
 /// 
 /// 包括心跳检测和常用工具等
@@ -30,7 +32,8 @@ pub fn factory_utils_router() -> Router {
     start_cleanup_task(None);
 
     let app = Router::new()
-        .route("/heartbeat", get(get_heartbeat));
+        .route("/heartbeat", get(get_heartbeat))
+        .route("/nodelist", get(get_nodelist));
     app
 }
 
@@ -111,6 +114,17 @@ pub async fn get_heartbeat(
     (StatusCode::OK, Json(resp))
 }
 
+/// GET /nodelist, 获取节点列表
+pub async fn get_nodelist() -> impl IntoResponse {
+    let result = NODE_LIST
+        .iter()
+        .map(|(key, _)| key.clone())
+        .collect::<Vec<String>>();
+    Json(result)
+}
+
+// #region 类型
+
 /// 用户活跃状态结构
 /// 
 /// TODO 感觉可以连同里面的操作方法封装成一个对象
@@ -126,6 +140,8 @@ static ONLINE_STATE: Lazy<OnlineState> = Lazy::new(|| OnlineState {
     user_activity_time: RwLock::new(HashMap::new()),
     user_activity_count: AtomicU32::new(0),
 });
+
+// #endregion
 
 /// 后台任务，定时清理不活跃用户
 /// 

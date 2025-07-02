@@ -13,6 +13,7 @@ use tracing_subscriber::{ // 日志订阅系统
     util::SubscriberInitExt
 };
 
+mod node;
 mod container;
 mod api;
 
